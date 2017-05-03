@@ -50,6 +50,16 @@ export default recompact.compose(
       dispatch(leaveGame({ player: account, gameId }))
     },
   }),
+  recompact.branch(({ game }) => game.players.length < 2, () => ({ game }) =>
+    <div>
+      <h2>Waiting for another player</h2>
+      <input
+        readOnly
+        value={absoluteUrl(gameRoute(game.id))}
+        style={{ width: '100%', fontSize: '20px' }}
+      />
+    </div>
+  ),
   recompact.withHandlers({
     onWordInputChange: ({
       setWordInput,
@@ -119,6 +129,7 @@ export default recompact.compose(
               key={word + i}
               isCurrentWord={i === index && status !== 'done'}
               isCorrect={isCorrectWord}
+              blurry={players.length < 2}
               isBeingWritten={
                 players
                   .filter(({ id }) => id !== account.id)
