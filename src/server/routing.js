@@ -1,9 +1,9 @@
 // eslint-disable-no-named-as-default-member
 import passport from 'passport'
-import renderApp from './renderApp'
-import gamesController from './controllers/gamesController'
-import sessionsController from './controllers/sessionsController'
-import { setCurrentUser } from './passport'
+import renderApp from 'server/renderApp'
+import gamesController from 'server/controllers/gamesController'
+import sessionsController from 'server/controllers/sessionsController'
+import { setCurrentUser } from 'server/passport'
 import {
   gameRoute,
   PLAY_ROUTE,

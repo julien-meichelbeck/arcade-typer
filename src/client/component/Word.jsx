@@ -13,9 +13,19 @@ export default ({
         : 'red'
       : 'black'
   const textDecoration = isBeingWritten ? 'underline' : 'none'
+  const textDecorationStyle = isBeingWritten ? 'dotted' : ''
+  const textDecorationColor = isBeingWritten ? 'red' : ''
   return (
     <span>
-      <span style={{ color, textDecoration, userSelect: 'none' }}>
+      <span
+        style={{
+          userSelect: 'none',
+          color,
+          textDecoration,
+          textDecorationStyle,
+          textDecorationColor,
+        }}
+      >
         {children}
       </span>
       {' '}
