@@ -1,10 +1,9 @@
 // @flow
 
-import { SERVER_URL } from './config'
 // eslint-disable-next-line import/prefer-default-export
 export const isProd = process.env.NODE_ENV === 'production'
 
-export const absoluteUrl = path => [SERVER_URL, path].join('')
+export const absoluteUrl = path => [window.location.origin, path].join('')
 
 const AVERAGE_CHARS_PER_WORD = 5
 export const wordsPerMinute = (startTime, array, index) => {

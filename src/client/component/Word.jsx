@@ -15,7 +15,7 @@ export default ({
   const textDecoration = isBeingWritten ? 'underline' : 'none'
   return (
     <span>
-      <span style={{ color, textDecoration }}>
+      <span style={{ color, textDecoration, userSelect: 'none' }}>
         {children}
       </span>
       {' '}

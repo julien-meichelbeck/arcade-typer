@@ -3,6 +3,7 @@ import compression from 'compression'
 import express from 'express'
 import { Server } from 'http'
 import socketIO from 'socket.io'
+import connectRedis from 'connect-redis'
 import session from 'express-session'
 import passport from 'passport'
 import cookieParser from 'cookie-parser'
@@ -10,8 +11,11 @@ import LocalStrategy from 'passport-local'
 import routing from 'server/routing'
 import { WEB_PORT, STATIC_PATH } from 'shared/config'
 import { isProd } from 'shared/utils'
+import * as redis from 'server/redis'
 import setUpSocket from 'server/socket'
 import sandbox from 'server/sandbox'
+
+const RedisStore = connectRedis(session)
 
 const USERS = [
   { id: 123, username: 'foo', password: 'bar', token: 'dzjakljdzaljdazkljzad' },
@@ -48,6 +52,7 @@ setUpSocket(io)
 app.use(compression())
 app.use(session({
   secret: 'MY_SECRET',
+  store: new RedisStore({ client: redis.connect() }),
   cookie: {
     secure: false,
     httpOnly: true,

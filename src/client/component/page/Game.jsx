@@ -138,6 +138,7 @@ export default recompact.compose(
           fontSize: '30px',
           color: isCorrectWord ? 'black' : 'red',
         }}
+        autoFocus
         value={wordInput}
         onChange={onWordInputChange}
       />
