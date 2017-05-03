@@ -1,0 +1,12 @@
+{
+  "presets": [
+    "env",
+    "flow",
+    "react"
+  ],
+  "plugins": [
+    "flow-react-proptypes",
+    "transform-object-rest-spread",
+    ["module-resolver", { "root": ["./src"]}]
+  ]
+}

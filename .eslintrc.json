@@ -1,0 +1,32 @@
+{
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended"
+  ],
+  "plugins": [
+    "flowtype",
+    "compat"
+  ],
+  "settings": {
+    "polyfills": ["fetch"],
+    "import/extensions": [".js", ".jsx"],
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules", "src"]
+      }
+    }
+  },
+  "rules": {
+    "semi": [2, "never"],
+    "no-unexpected-multiline": 2,
+    "compat/compat": 2,
+    "react/prop-types": "off",
+    "no-nested-ternary": "off",
+    "no-shadow": "off",
+    "import/no-named-as-default-member": "off"
+  },
+  "env": {
+    "browser": true,
+    "jest": true
+  }
+}
