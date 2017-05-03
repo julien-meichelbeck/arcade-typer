@@ -50,15 +50,34 @@ export default recompact.compose(
       dispatch(leaveGame({ player: account, gameId }))
     },
   }),
-  recompact.branch(({ game }) => game.players.length < 2, () => ({ game }) =>
-    <div>
-      <h2>Waiting for another player</h2>
-      <input
-        readOnly
-        value={absoluteUrl(gameRoute(game.id))}
-        style={{ width: '100%', fontSize: '20px' }}
-      />
-    </div>
+  recompact.branch(
+    ({ game }) => game.players.length < 2,
+    () => ({ game }) =>
+      <div>
+        <h2>Waiting for another player</h2>
+        <input
+          readOnly
+          value={absoluteUrl(gameRoute(game.id))}
+          style={{ width: '100%', fontSize: '20px' }}
+        />
+      </div>,
+  ),
+  recompact.withState('countdown', 'setCountdown', 3),
+  recompact.withState('intervalId', 'setIntervalId', 0),
+  recompact.lifecycle({
+    componentDidMount() {
+      const intervalId = setInterval(() => this.props.setCountdown(this.props.countdown - 1), 1000)
+      this.props.setIntervalId(intervalId)
+    },
+    componentDidUpdate() {
+      if (this.props.countdown < 1) {
+        clearInterval(this.props.intervalId)
+      }
+    },
+  }),
+  recompact.branch(
+    ({ countdown }) => countdown > 0,
+    () => ({ countdown }) => <div>{ countdown }</div>,
   ),
   recompact.withHandlers({
     onWordInputChange: ({
