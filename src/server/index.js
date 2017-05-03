@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import compression from 'compression'
 import express from 'express'
 import { Server } from 'http'
