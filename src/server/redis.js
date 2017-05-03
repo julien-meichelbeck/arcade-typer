@@ -1,10 +1,11 @@
 import redis from 'redis'
+import { REDIS_URL } from 'shared/config'
 
 let redisClient
 
 export const connect = () => {
   if (!redisClient) {
-    redisClient = redis.createClient({ url: 'redis://localhost:6379/1' })
+    redisClient = redis.createClient({ url: REDIS_URL })
     redisClient.on('error', (err) => { console.error(`Error ${err}`) })
   }
 
