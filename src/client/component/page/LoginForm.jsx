@@ -2,9 +2,11 @@ import 'isomorphic-fetch'
 
 import React from 'react'
 import { connect } from 'react-redux'
-
 import recompact from 'shared/modules/recompact'
 import { saveAccount } from 'shared/action/accounts'
+import Button from 'client/component/Button'
+import Input from 'client/component/Input'
+import Text from 'client/component/Text'
 
 export default recompact.compose(
   connect(
@@ -28,16 +30,16 @@ export default recompact.compose(
 }) => (
   <form onSubmit={handleSubmit}>
     <div>
-      <label>Please choose a username</label>
-      <input
-        type="text"
+      <Text lead>Please enter a username.</Text>
+      <Input
         name="username"
         value={username}
         onChange={({ target: { value } }) => setUsername(value)}
       />
     </div>
-    <div>
-      <input type="submit" value="Log In" />
-    </div>
+    <br />
+    <button type="submit" style={{ display: 'none' }} />
+    <Button primary spaced onClick={handleSubmit}>Join</Button>
+    <Button spaced>Cancel</Button>
   </form>
 ))

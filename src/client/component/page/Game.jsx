@@ -7,6 +7,7 @@ import { gameRoute } from 'shared/routes'
 import { wordsPerMinute, absoluteUrl } from 'shared/utils'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
 import Countdown from 'client/component/page/game/Countdown'
+import LoginForm from 'client/component/page/LoginForm'
 import Word from '../Word'
 import Player from '../Player'
 
@@ -24,7 +25,7 @@ export default recompact.compose(
   ),
   recompact.branch(
     ({ account }) => !account || !account.username,
-    () => () => <div>You must login!</div>,
+    () => () => <LoginForm />,
   ),
   recompact.lifecycle({
     componentWillMount() {

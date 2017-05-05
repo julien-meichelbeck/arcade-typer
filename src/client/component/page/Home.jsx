@@ -10,7 +10,6 @@ export default recompact.compose(
   account,
 }) => (
   <div>
-    <h1>Home</h1>
     { !account ? <LoginForm /> : null }
   </div>
 ))
