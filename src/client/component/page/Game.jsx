@@ -7,6 +7,7 @@ import { gameRoute } from 'shared/routes'
 import { wordsPerMinute, absoluteUrl } from 'shared/utils'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
 import Countdown from 'client/component/page/game/Countdown'
+import CountdownTimer from 'client/component/CountdownTimer'
 import LoginForm from 'client/component/page/LoginForm'
 import Word from '../Word'
 import Player from '../Player'
@@ -111,7 +112,6 @@ export default recompact.compose(
     || words[index].substring(0, wordInput.length) === wordInput
   return (
     <div>
-      { !isGameReady ? countdown : null }
       { players.map(player =>
         <Player
           key={player.id}
@@ -121,6 +121,7 @@ export default recompact.compose(
         />)
       }
       <p style={{ fontSize: '24px' }}>
+        { !isGameReady ? <CountdownTimer time={countdown} /> : null }
         {
           words.map((word, i) =>
             <Word
