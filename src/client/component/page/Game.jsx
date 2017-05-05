@@ -5,6 +5,8 @@ import recompact from 'shared/modules/recompact'
 import { createGame, joinGame, leaveGame, sendPlayerProgress } from 'shared/action/games'
 import { gameRoute } from 'shared/routes'
 import { wordsPerMinute, absoluteUrl } from 'shared/utils'
+import WaitingRoom from 'client/component/page/game/WaitingRoom'
+import Countdown from 'client/component/page/game/Countdown'
 import Word from '../Word'
 import Player from '../Player'
 
@@ -50,35 +52,8 @@ export default recompact.compose(
       dispatch(leaveGame({ player: account, gameId }))
     },
   }),
-  recompact.branch(
-    ({ game }) => game.players.length < 2,
-    () => ({ game }) =>
-      <div>
-        <h2>Waiting for another player</h2>
-        <input
-          readOnly
-          value={absoluteUrl(gameRoute(game.id))}
-          style={{ width: '100%', fontSize: '20px' }}
-        />
-      </div>,
-  ),
-  recompact.withState('countdown', 'setCountdown', 3),
-  recompact.withState('intervalId', 'setIntervalId', 0),
-  recompact.lifecycle({
-    componentDidMount() {
-      const intervalId = setInterval(() => this.props.setCountdown(this.props.countdown - 1), 1000)
-      this.props.setIntervalId(intervalId)
-    },
-    componentDidUpdate() {
-      if (this.props.countdown < 1) {
-        clearInterval(this.props.intervalId)
-      }
-    },
-  }),
-  recompact.branch(
-    ({ countdown }) => countdown > 0,
-    () => ({ countdown }) => <div>{ countdown }</div>,
-  ),
+  WaitingRoom,
+  Countdown,
   recompact.withHandlers({
     onWordInputChange: ({
       setWordInput,
@@ -128,11 +103,14 @@ export default recompact.compose(
   onWordInputChange,
   index,
   status,
+  countdown,
 }) => {
+  const isGameReady = countdown < 1
   const isCorrectWord = !wordInput.length
     || words[index].substring(0, wordInput.length) === wordInput
   return (
     <div>
+      { !isGameReady ? countdown : null }
       { players.map(player =>
         <Player
           key={player.id}
@@ -148,7 +126,7 @@ export default recompact.compose(
               key={word + i}
               isCurrentWord={i === index && status !== 'done'}
               isCorrect={isCorrectWord}
-              blurry={players.length < 2}
+              blurry={!isGameReady}
               isBeingWritten={
                 players
                   .filter(({ id }) => id !== account.id)
@@ -170,7 +148,7 @@ export default recompact.compose(
         }}
         autoFocus
         value={wordInput}
-        onChange={onWordInputChange}
+        onChange={isGameReady ? onWordInputChange : null}
       />
       <br />
       <p>{'Play with your friends!'}</p>
