@@ -8,11 +8,13 @@ import {
   gameRoute,
   PLAY_ROUTE,
   LOGIN_ROUTE,
+  LOGOUT_ROUTE,
 } from 'shared/routes'
 
 export default (app) => {
   // Sessions
-  app.post(LOGIN_ROUTE, passport.authenticate('local'), sessionsController.create)
+  app.post(LOGIN_ROUTE, passport.authenticate('local'), sessionsController.login)
+  app.get(LOGOUT_ROUTE, sessionsController.logout)
 
   // Games
   app.post(PLAY_ROUTE, gamesController.create)

@@ -7,6 +7,7 @@ import recompact from 'shared/modules/recompact'
 import {
   HOME_ROUTE,
   PLAY_ROUTE,
+  LOGOUT_ROUTE,
 } from 'shared/routes'
 
 export default recompact.compose(
@@ -20,6 +21,7 @@ export default recompact.compose(
       {[
         { route: HOME_ROUTE, label: 'Home' },
         { route: PLAY_ROUTE, label: 'New game' },
+        { route: LOGOUT_ROUTE, label: 'Logout' },
       ].map(link => (
         <li key={link.route}>
           <NavLink to={link.route} activeStyle={{ color: 'limegreen' }} exact>{link.label}</NavLink>

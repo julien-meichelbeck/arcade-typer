@@ -24,8 +24,7 @@ const USERS = [
 
 const strategy = new LocalStrategy(
   (user, pwd, done) => {
-    const currentUser =
-      USERS.find(({ username, password }) => user === username && pwd === password)
+    const currentUser = USERS.find(({ username }) => user === username)
     if (currentUser) {
       done(null, currentUser)
     } else {

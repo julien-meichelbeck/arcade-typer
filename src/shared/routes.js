@@ -8,4 +8,5 @@ export const gameRoute = (id: ?number) => `/games/${id || ':id'}`
 
 // API
 export const LOGIN_ROUTE = '/login'
+export const LOGOUT_ROUTE = '/logout'
 export const helloEndpointRoute = (num: ?number) => `/ajax/hello/${num || ':num'}`
