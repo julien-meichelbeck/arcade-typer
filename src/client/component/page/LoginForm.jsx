@@ -1,25 +1,32 @@
 import 'isomorphic-fetch'
 
 import React from 'react'
+import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
 import { saveAccount } from 'shared/action/accounts'
 import Button from 'client/component/Button'
 import Input from 'client/component/Input'
 import Text from 'client/component/Text'
+import { gameRoute } from 'shared/routes'
 
 export default recompact.compose(
   connect(
-    () => ({}),
+    ({ game }) => ({ game }),
     dispatch => ({ dispatch }),
   ),
   recompact.withState('username', 'setUsername', ''),
   recompact.withHandlers({
-    handleSubmit: (({ dispatch, username, password }) => (event) => {
+    handleSubmit: (({ dispatch, username, password, game }) => (event) => {
       event.preventDefault()
       fetch(`/login?username=${username}&password=${password}`, { method: 'POST', credentials: 'include' })
         .then(response => response.json())
-        .then(data => dispatch(saveAccount(data.account)))
+        .then((data) => {
+          dispatch(saveAccount(data.account))
+          if (game && game.id) {
+            browserHistory.push(gameRoute(game.id))
+          }
+        })
         .catch(error => console.log(error))
     }),
   }),
