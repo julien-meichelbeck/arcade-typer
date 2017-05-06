@@ -11,7 +11,8 @@ const renderApp = (req, additionalState = {}) => {
     `<!doctype html>
       <html>
         <head>
-          <title>FIX ME</title>
+          <title>Arcade typer</title>
+          <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Changa+One" rel="stylesheet">
           <link rel="stylesheet" href="${STATIC_PATH}/css/style.css">
         </head>
         <body>

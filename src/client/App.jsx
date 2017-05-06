@@ -12,11 +12,12 @@ import Nav from 'client/component/Nav'
 import HomePage from 'client/component/page/Home'
 import GamePage from 'client/component/page/Game'
 import NotFoundPage from 'client/component/page/not-found'
+import Container from 'client/component/Container'
 
 const App = () =>
   <div>
     <Nav />
-    <div style={{ width: '80%', margin: 'auto' }}>
+    <Container>
       <Switch>
         <Route
           path={gameRoute()}
@@ -26,7 +27,7 @@ const App = () =>
         <Route exact path={HOME_ROUTE} render={() => <HomePage />} />
         <Route component={NotFoundPage} />
       </Switch>
-    </div>
+    </Container>
   </div>
 
 export default App

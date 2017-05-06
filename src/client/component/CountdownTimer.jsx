@@ -4,16 +4,17 @@ import recompact from 'shared/modules/recompact'
 
 const styles = {
   root: {
-    fontSize: 50,
-    position: 'relative',
+    fontSize: 80,
     left: '50%',
-    top: 10,
-    height: 0,
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    position: 'absolute',
+    fontFamily: "'Changa One', cursive",
   },
 }
 
 export default recompact.compose(
   injectSheet(styles),
 )(({ time, classes }) => (
-  <div className={classes.root}>{time}</div>
+  <div className={classes.root}>{time === 1 ? 'GO!' : time - 1}</div>
 ))

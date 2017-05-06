@@ -1,7 +1,7 @@
 import recompact from 'shared/modules/recompact'
 
 export default recompact.compose(
-  recompact.withState('countdown', 'setCountdown', 100),
+  recompact.withState('countdown', 'setCountdown', 4),
   recompact.withState('intervalId', 'setIntervalId', 0),
   recompact.lifecycle({
     componentDidMount() {
@@ -12,6 +12,9 @@ export default recompact.compose(
       if (this.props.countdown < 1) {
         clearInterval(this.props.intervalId)
       }
+    },
+    componentWillUnmount() {
+      clearInterval(this.props.intervalId)
     },
   }),
 )

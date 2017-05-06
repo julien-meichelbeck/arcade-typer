@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import injectSheet from 'react-jss'
 import classNames from 'classnames'
 
@@ -15,6 +16,7 @@ const styles = {
     borderRadius: '4px',
     fontSize: '15px',
     fontWeight: '600',
+    fontFamily: "'Montserrat', sans-serif",
     textTransform: 'uppercase',
     letterSpacing: '.025em',
     color: '#6772e5',
@@ -52,6 +54,7 @@ export default injectSheet(styles)(({
   primary,
   dark,
   spaced,
+  to,
   className: classNameProp,
   ...props
 }) => {
@@ -62,6 +65,8 @@ export default injectSheet(styles)(({
     [classes.dark]: dark,
   }, classNameProp)
   return (
-    <a className={className} {...props}>{children}</a>
+    to
+    ? <Link to={to} className={className} {...props}>{children}</Link>
+    : <a className={className} {...props}>{children}</a>
   )
 })

@@ -120,7 +120,8 @@ export default recompact.compose(
           {...player}
         />)
       }
-      <p style={{ fontSize: '24px' }}>
+      <br />
+      <div style={{ fontSize: '24px', position: 'relative' }}>
         { !isGameReady ? <CountdownTimer time={countdown} /> : null }
         {
           words.map((word, i) =>
@@ -139,7 +140,8 @@ export default recompact.compose(
             </Word>,
           )
         }
-      </p>
+      </div>
+      <br />
       <input
         type="text"
         style={{
@@ -149,6 +151,7 @@ export default recompact.compose(
           color: isCorrectWord ? 'black' : 'red',
         }}
         autoFocus
+        placeholder="Type the above text here when the game begins"
         value={wordInput}
         onChange={isGameReady ? onWordInputChange : null}
       />
