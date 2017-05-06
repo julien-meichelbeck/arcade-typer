@@ -69,29 +69,35 @@ export default recompact.compose(
       dispatch,
       account,
     }) => ({ target: { value } }) => {
+      const now = Date.now()
       if (!startTime) {
-        setStartTime(Date.now())
+        setStartTime(now)
         setStatus('playing')
       }
       const isWordWithSpace = `${words[index]} ` === value
       const isLastWord = index + 1 === words.length && words[index] === value
       if (isWordWithSpace || isLastWord) {
-        dispatch(sendPlayerProgress({
+        const time = now - startTime
+        const playerProgress = {
           player: {
             id: account.id,
             username: account.username,
             progress: index + 1,
-            speed: wordsPerMinute(startTime, words, index),
+            speed: wordsPerMinute(time, words, index),
+            time,
           },
           gameId: game.id,
-        }))
+        }
         if (isWordWithSpace) {
           setWordInput('')
           setIndex(index + 1)
+          playerProgress.player.status = 'typing'
         } else if (isLastWord) {
           setWordInput('')
           setStatus('done')
+          playerProgress.player.status = 'done'
         }
+        dispatch(sendPlayerProgress(playerProgress))
       } else {
         setWordInput(value)
       }
@@ -110,13 +116,18 @@ export default recompact.compose(
   const isGameReady = countdown < 1
   const isCorrectWord = !wordInput.length
     || words[index].substring(0, wordInput.length) === wordInput
+  const finishedPlayers = players
+    .filter(player => player.status === 'done')
+    .sort((pA, pB) => pA.time - pB.time)
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       { players.map(player =>
         <Player
           key={player.id}
+          otherPlayers={players}
           progressValue={player.progress}
           progressMax={words.length}
+          position={finishedPlayers.findIndex(({ id }) => player.id === id) + 1}
           {...player}
         />)
       }
