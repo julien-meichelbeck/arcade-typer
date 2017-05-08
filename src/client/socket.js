@@ -9,6 +9,7 @@ import {
   setGameState,
   SET_GAME_STATE,
   UPDATE_PLAYER_PROGRESS,
+  CHANGE_GAME,
 } from 'shared/action/games'
 
 export const socket = socketIOClient(window.location.host)
@@ -18,6 +19,18 @@ export const socket = socketIOClient(window.location.host)
 const setUpSocket = (store: Object) => {
   socket.on(SET_GAME_STATE, (newGameState) => {
     store.dispatch(setGameState(newGameState))
+  })
+
+  socket.on(CHANGE_GAME, ({ newGame }) => {
+    setTimeout(
+      () => {
+        window.location = `/games/${newGame.id}`
+        // store.dispatch(joinGame({ player: store.account, id: newGame.id }))
+        // store.dispatch(leaveGame({ player: store.account, id: previousGame.id }))
+        // socket.leave()
+        // store.dispatch(setGameState(newGame))
+      }, 2000,
+    )
   })
 
   socket.on(UPDATE_PLAYER_PROGRESS, (payload) => {

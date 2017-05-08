@@ -40,23 +40,24 @@ export default recompact.compose(
   showShareUrl,
   setShowShareUrl,
 }) => {
-  const finishedPlayers = players
-    .filter(player => player.status === 'done')
-    .sort((pA, pB) => pA.time - pB.time)
+  const sortedPlayers = players.sort((pA, pB) => pA.time - pB.time)
+  const finishedPlayers = sortedPlayers.filter(player => player.status === 'done')
+
   return (
     <div className={classes.root}>
       <Container>
         {
-          players.map((player, index) =>
-            <Player
-              key={player.id}
-              otherPlayers={players}
-              progressValue={player.progress}
-              progressMax={words.length}
-              position={finishedPlayers.findIndex(({ id }) => player.id === id) + 1}
-              color={COLORS[index]}
-              {...player}
-            />)
+          sortedPlayers
+            .map((player, index) =>
+              <Player
+                key={player.id}
+                otherPlayers={players}
+                progressValue={player.progress}
+                progressMax={words.length}
+                position={finishedPlayers.findIndex(({ id }) => player.id === id) + 1}
+                color={COLORS[index]}
+                {...player}
+              />)
         }
         <Button dark onClick={() => setShowShareUrl(!showShareUrl)}>Add a player</Button>
         {

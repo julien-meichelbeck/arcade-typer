@@ -8,7 +8,7 @@ const styles = {
   },
   username: {
     fontSize: 24,
-    margin: 0,
+    margin: '0 0 7px',
   },
   position: {
   },

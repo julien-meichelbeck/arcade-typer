@@ -2,10 +2,20 @@ import * as redis from 'server/redis'
 
 const toRedisKey = id => `games::${id}`
 const TEXTS = [
-  'I want you to remember, Clark... In all the years to come... in your most private moments... I want you to remember my hand at your throat... I want you to remember the one man who beat you...',
-  'The accumulated filth of all their sex and murder will foam up about their waists and all the whores and politicians will look up and shout "Save us!"... and I\'ll look down and whisper "No."',
-  'Heard joke once: Man goes to doctor. Says he\'s depressed. Says life seems harsh and cruel. Says he feels all alone in a threatening world where what lies ahead is vague and uncertain. Doctor says, "Treatment is simple. Great clown Pagliacci is in town tonight. Go and see him. That should pick you up." Man bursts into tears. Says, "But doctor... I am Pagliacci.',
+  'foo',
+  // 'I want you to remember, Clark... In all the years to come... in your most private moments... I want you to remember my hand at your throat... I want you to remember the one man who beat you...',
+  // 'The accumulated filth of all their sex and murder will foam up about their waists and all the whores and politicians will look up and shout "Save us!"... and I\'ll look down and whisper "No."',
+  // 'Heard joke once: Man goes to doctor. Says he\'s depressed. Says life seems harsh and cruel. Says he feels all alone in a threatening world where what lies ahead is vague and uncertain. Doctor says, "Treatment is simple. Great clown Pagliacci is in town tonight. Go and see him. That should pick you up." Man bursts into tears. Says, "But doctor... I am Pagliacci.',
 ]
+
+const extractPlayers = ({ players }) =>
+  players.map(player => ({
+    ...player,
+    speed: 0,
+    progress: 0,
+    time: 0,
+    status: 'waiting',
+  }))
 
 export default class Game {
   static find(id, callback) {
@@ -18,11 +28,11 @@ export default class Game {
     })
   }
 
-  static create() {
+  static create(previousGame = null) {
     const game = new Game({
       id: Math.floor(Math.random() * (Math.floor(10000 - 1000) + 1000)),
       text: TEXTS[Math.floor(Math.random() * TEXTS.length)],
-      players: [],
+      players: previousGame ? extractPlayers(previousGame) : [],
     })
     game.save()
     return game
@@ -34,7 +44,14 @@ export default class Game {
     this.players = players
   }
 
+  isDone() {
+    return this.players.every(({ status }) => status === 'done')
+  }
+
   addPlayer(player) {
+    if (this.players.find(({ id }) => id === player.id)) {
+      return
+    }
     this.players = this.players.concat(player)
     this.save()
   }

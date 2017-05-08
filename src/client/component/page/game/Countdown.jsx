@@ -1,7 +1,10 @@
 import recompact from 'shared/modules/recompact'
+import { isProd } from 'shared/utils'
+
+const DURATION = isProd ? 10 : 2
 
 export default recompact.compose(
-  recompact.withState('countdown', 'setCountdown', 4),
+  recompact.withState('countdown', 'setCountdown', DURATION),
   recompact.withState('intervalId', 'setIntervalId', 0),
   recompact.lifecycle({
     componentDidMount() {

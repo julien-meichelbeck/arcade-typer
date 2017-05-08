@@ -43,6 +43,17 @@ test('updatePlayer', () => {
   ])
 })
 
+test('isDone', () => {
+  expect(game.isDone()).toBe(false)
+  game.updatePlayer({ id: 1, status: 'done' })
+  expect(game.isDone()).toBe(true)
+  game.addPlayer({
+    id: 2,
+    status: 'typing',
+  })
+  expect(game.isDone()).toBe(false)
+})
+
 test('toJson', () => {
   expect(game.toJson()).toEqual('{"id":1,"text":"This is a placeholder text","players":[{"id":1,"username":"Bruce Wayne"}]}')
 })
