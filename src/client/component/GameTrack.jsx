@@ -40,14 +40,16 @@ export default recompact.compose(
   showShareUrl,
   setShowShareUrl,
 }) => {
-  const sortedPlayers = players.sort((pA, pB) => pA.time - pB.time)
-  const finishedPlayers = sortedPlayers.filter(player => player.status === 'done')
+  const finishedPlayers = players
+    .filter(player => player.status === 'done')
+    .sort((pA, pB) => pA.time - pB.time)
 
   return (
     <div className={classes.root}>
       <Container>
         {
-          sortedPlayers
+          players
+            .sort((pA, pB) => pB.progress - pA.progress)
             .map((player, index) =>
               <Player
                 key={player.id}

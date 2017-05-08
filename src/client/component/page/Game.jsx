@@ -108,6 +108,7 @@ export default recompact.compose(
       source,
     },
   },
+  status,
   account,
   words,
   wordInput,
@@ -143,6 +144,7 @@ export default recompact.compose(
           fontSize: '30px',
           color: isCorrectWord ? 'black' : 'red',
         }}
+        readOnly={status === 'done'}
         autoFocus
         placeholder="Type the above text here when the game begins"
         value={wordInput}
