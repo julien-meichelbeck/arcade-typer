@@ -6,8 +6,6 @@ const styles = {
     width: '100%',
     maxWidth: '1040px',
     margin: 'auto',
-    display: 'flex',
-    padding: 10,
   },
 }
 

@@ -24,7 +24,12 @@ const USERS = [
 
 const strategy = new LocalStrategy(
   (user, pwd, done) => {
-    const currentUser = USERS.find(({ username }) => user === username)
+    const currentUser = {
+      id: user,
+      username: user,
+      password: user,
+      token: user,
+    } // USERS.find(({ username }) => user === username)
     if (currentUser) {
       done(null, currentUser)
     } else {
@@ -38,7 +43,12 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser((authToken, done) => {
-  const user = USERS.find(({ token }) => token === authToken)
+  const user = {
+    id: authToken,
+    username: authToken,
+    password: authToken,
+    token: authToken,
+  } // USERS.find(({ token }) => token === authToken)
   done(null, user)
 })
 

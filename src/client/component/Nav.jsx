@@ -14,7 +14,8 @@ import injectSheet from 'react-jss'
 const styles = {
   root: { },
   siteTitle: {
-    fontSize: '18px',
+    color: 'rgb(38, 31, 66)',
+    fontSize: 18,
     textTransform: 'uppercase',
   },
 }
@@ -27,7 +28,7 @@ export default recompact.compose(
   account,
 }) =>
   <nav className={classes.root}>
-    <Container>
+    <Container style={{ display: 'flex' }}>
       <h1 className={classes.siteTitle}>Arcade typer</h1>
       <div style={{ flex: '1 0 0' }} />
       <Button to={HOME_ROUTE} spaced primary>Home</Button>

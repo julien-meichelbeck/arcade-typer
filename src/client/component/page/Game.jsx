@@ -7,10 +7,9 @@ import { gameRoute } from 'shared/routes'
 import { wordsPerMinute, absoluteUrl } from 'shared/utils'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
 import Countdown from 'client/component/page/game/Countdown'
-import CountdownTimer from 'client/component/CountdownTimer'
 import LoginForm from 'client/component/page/LoginForm'
-import Word from '../Word'
-import Player from '../Player'
+import GameText from 'client/component/GameText'
+import GameTrack from 'client/component/GameTrack'
 
 export default recompact.compose(
   recompact.withState('status', 'setStatus', 'idle'),
@@ -41,9 +40,7 @@ export default recompact.compose(
     },
   }),
   recompact.branch(({ game }) => !game || !game.id, () => () => <div>Loading</div>),
-  recompact.withProps(({ game: { text } }) => ({
-    words: text.split(' '),
-  })),
+  recompact.withProps(({ game: { text } }) => ({ words: text.split(' ') })),
   recompact.lifecycle({
     componentWillMount() {
       const { account, game: { id: gameId }, dispatch } = this.props
@@ -110,49 +107,27 @@ export default recompact.compose(
   wordInput,
   onWordInputChange,
   index,
-  status,
   countdown,
 }) => {
   const isGameReady = countdown < 1
   const isCorrectWord = !wordInput.length
     || words[index].substring(0, wordInput.length) === wordInput
-  const finishedPlayers = players
-    .filter(player => player.status === 'done')
-    .sort((pA, pB) => pA.time - pB.time)
   return (
     <div style={{ width: '100%' }}>
-      { players.map(player =>
-        <Player
-          key={player.id}
-          otherPlayers={players}
-          progressValue={player.progress}
-          progressMax={words.length}
-          position={finishedPlayers.findIndex(({ id }) => player.id === id) + 1}
-          {...player}
-        />)
-      }
-      <br />
-      <div style={{ fontSize: '24px', position: 'relative' }}>
-        { !isGameReady ? <CountdownTimer time={countdown} /> : null }
-        {
-          words.map((word, i) =>
-            <Word
-              key={word + i}
-              isCurrentWord={i === index && status !== 'done'}
-              isCorrect={isCorrectWord}
-              blurry={!isGameReady}
-              isBeingWritten={
-                players
-                  .filter(({ id }) => id !== account.id)
-                  .some(({ progress }) => progress === i)
-              }
-            >
-              {word}
-            </Word>,
-          )
-        }
-      </div>
-      <br />
+      <GameTrack
+        players={players}
+        words={words}
+        gameUrl={absoluteUrl(gameRoute(id))}
+      />
+      <GameText
+        isGameReady={isGameReady}
+        words={words}
+        isCorrectWord={isCorrectWord}
+        countdown={countdown}
+        index={index}
+        account={account}
+        players={players}
+      />
       <input
         type="text"
         style={{
@@ -165,13 +140,6 @@ export default recompact.compose(
         placeholder="Type the above text here when the game begins"
         value={wordInput}
         onChange={isGameReady ? onWordInputChange : null}
-      />
-      <br />
-      <p>{'Play with your friends!'}</p>
-      <input
-        readOnly
-        value={absoluteUrl(gameRoute(id))}
-        style={{ width: '100%', fontSize: '20px' }}
       />
     </div>
   )
