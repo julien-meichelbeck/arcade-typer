@@ -10,6 +10,11 @@ const styles = {
     position: 'relative',
     margin: '30px 0 30px',
   },
+  source: {
+    color: '#aaa',
+    textAlign: 'right',
+    margin: 14,
+  },
 }
 
 export default injectSheet(styles)(({
@@ -20,6 +25,7 @@ export default injectSheet(styles)(({
   index,
   account,
   players,
+  source,
   classes,
 }) => (
   <div className={classes.root}>
@@ -41,5 +47,6 @@ export default injectSheet(styles)(({
         </Word>,
       )
     }
+    <div className={classes.source}>{source}</div>
   </div>
 ))

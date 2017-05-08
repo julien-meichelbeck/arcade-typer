@@ -14,6 +14,7 @@ import injectSheet from 'react-jss'
 const styles = {
   root: { },
   siteTitle: {
+    marginTop: 23,
     color: 'rgb(38, 31, 66)',
     fontSize: 18,
     textTransform: 'uppercase',

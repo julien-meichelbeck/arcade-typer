@@ -40,7 +40,7 @@ export default recompact.compose(
     },
   }),
   recompact.branch(({ game }) => !game || !game.id, () => () => <div>Loading</div>),
-  recompact.withProps(({ game: { text } }) => ({ words: text.split(' ') })),
+  recompact.withProps(({ game: { text } }) => ({ words: text.content.split(' ') })),
   recompact.lifecycle({
     componentWillMount() {
       const { account, game: { id: gameId }, dispatch } = this.props
@@ -101,7 +101,13 @@ export default recompact.compose(
     },
   }),
 )(({
-  game: { players, id },
+  game: {
+    players,
+    id,
+    text: {
+      source,
+    },
+  },
   account,
   words,
   wordInput,
@@ -127,6 +133,7 @@ export default recompact.compose(
         index={index}
         account={account}
         players={players}
+        source={source}
       />
       <input
         type="text"
