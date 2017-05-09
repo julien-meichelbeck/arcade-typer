@@ -10,6 +10,9 @@ export const joinGame = createAction(JOIN_GAME)
 export const LEAVE_GAME = 'SERVER/LEAVE_GAME'
 export const leaveGame = createAction(LEAVE_GAME)
 
+export const SET_GAME_MESSAGE = 'SET_GAME_MESSAGE'
+export const setGameMessage = createAction(SET_GAME_MESSAGE)
+
 export const CHANGE_GAME = 'CLIENT/CHANGE_GAME'
 
 export const SEND_PLAYER_PROGRESS = 'SERVER/SEND_PLAYER_PROGRESS'

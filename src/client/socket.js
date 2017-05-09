@@ -1,7 +1,6 @@
 // @flow
 
 import socketIOClient from 'socket.io-client'
-
 import {
   addPlayer,
   updatePlayerProgress,
@@ -10,6 +9,7 @@ import {
   SET_GAME_STATE,
   UPDATE_PLAYER_PROGRESS,
   CHANGE_GAME,
+  setGameMessage,
 } from 'shared/action/games'
 
 export const socket = socketIOClient(window.location.host)
@@ -21,7 +21,13 @@ const setUpSocket = (store: Object) => {
     store.dispatch(setGameState(newGameState))
   })
 
-  socket.on(CHANGE_GAME, ({ newGame }) => {
+  socket.on(CHANGE_GAME, ({ newGame, timeBeforeGame }) => {
+    let elapsedTime = 0
+    store.dispatch(setGameMessage({ message: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
+    setInterval(() => {
+      elapsedTime += 1
+      store.dispatch(setGameMessage({ message: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
+    }, 1000)
     setTimeout(
       () => {
         window.location = `/games/${newGame.id}`
@@ -29,7 +35,7 @@ const setUpSocket = (store: Object) => {
         // store.dispatch(leaveGame({ player: store.account, id: previousGame.id }))
         // socket.leave()
         // store.dispatch(setGameState(newGame))
-      }, 2000,
+      }, timeBeforeGame,
     )
   })
 

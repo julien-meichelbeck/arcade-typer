@@ -1,5 +1,6 @@
 import { SET_GAME_STATE, CHANGE_GAME } from 'shared/action/games'
 import Game from 'server/models/game'
+import { rankedPlayers } from 'shared/utils'
 
 const sendNewGameState = ({ io, game }) => io.to(game.id).emit(SET_GAME_STATE, game)
 
@@ -28,9 +29,11 @@ const setPlayerProgress = (io, { gameId, player }) => {
   Game.find(gameId, (game) => {
     game.updatePlayer(player)
     sendNewGameState({ io, game: game.toObject() })
-    if (game.isDone()) {
+    const winner = rankedPlayers(game.players)[0]
+    if (player.status === 'done' && winner.id === player.id) {
       io.to(game.id).emit(CHANGE_GAME, {
-        previousGame: game,
+        timeBeforeGame: winner.time / 2,
+        previousGame: game.toObject(),
         newGame: Game.create(game).toObject(),
       })
     }
