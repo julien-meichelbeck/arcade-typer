@@ -9,6 +9,7 @@ const styles = {
   username: {
     fontSize: 24,
     margin: '0 0 7px',
+    fontFamily: "'Montserrat', sans-serif",
   },
   position: {
   },

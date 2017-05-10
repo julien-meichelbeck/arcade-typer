@@ -1,9 +1,10 @@
 import * as redis from 'server/redis'
 import nameGenerator from 'server/services/nameGenerator'
+import { isProd } from 'shared/utils'
 
 const toRedisKey = id => `games::${id}`
 
-const TEXTS = [
+const TEXTS = isProd ? [
   {
     content: 'I want you to remember, Clark... In all the years to come... in your most private moments... I want you to remember my hand at your throat... I want you to remember the one man who beat you...',
     source: 'The Dark Knight Rises - Frank Miller',
@@ -16,7 +17,7 @@ const TEXTS = [
     content: 'Heard joke once: Man goes to doctor. Says he\'s depressed. Says life seems harsh and cruel. Says he feels all alone in a threatening world where what lies ahead is vague and uncertain. Doctor says, "Treatment is simple. Great clown Pagliacci is in town tonight. Go and see him. That should pick you up." Man bursts into tears. Says, "But doctor... I am Pagliacci.',
     source: 'Watchmen - Alan Moore',
   },
-]
+] : [{ content: 'Foo is bar', author: 'Lorem Ipsum' }]
 
 const extractPlayers = ({ players }) =>
   players.map(player => ({
@@ -30,8 +31,10 @@ const extractPlayers = ({ players }) =>
 export default class Game {
   static find(id, callback) {
     redis.connect().get(toRedisKey(id), (err, game) => {
-      if (!err) {
+      if (!err && game) {
         callback(new Game(JSON.parse(game)))
+      } else if (!game) {
+        console.error(`Could not find game ${toRedisKey(id)}`)
       } else {
         console.error(err)
       }

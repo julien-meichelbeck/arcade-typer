@@ -104,6 +104,7 @@ export default recompact.compose(
   game: {
     players,
     id,
+    message,
     text: {
       source,
     },
@@ -126,6 +127,7 @@ export default recompact.compose(
         words={words}
         gameUrl={absoluteUrl(gameRoute(id))}
       />
+      {message}
       <GameText
         isGameReady={isGameReady}
         words={words}
@@ -146,7 +148,7 @@ export default recompact.compose(
         }}
         readOnly={status === 'done'}
         autoFocus
-        placeholder="Type the above text here when the game begins"
+        placeholder={index ? null : 'Type the above text here when the game begins'}
         value={wordInput}
         onChange={isGameReady ? onWordInputChange : null}
       />

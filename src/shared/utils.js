@@ -12,3 +12,7 @@ export const wordsPerMinute = (duration, array, index) => {
       .reduce((acc, elem) => acc + elem.length, 0)
   return Math.round(((typedCharactersCount / AVERAGE_CHARS_PER_WORD) / durationInMinutes) * 1.20)
 }
+
+export const rankedPlayers = players => players
+  .filter(player => player.status === 'done')
+  .sort((pA, pB) => pA.time - pB.time)
