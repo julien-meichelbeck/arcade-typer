@@ -1,6 +1,6 @@
 // @flow
 
-import { IO_CONNECT } from 'shared/config'
+import { IO_CONNECT, IO_DISCONNECT } from 'shared/config'
 
 import {
   SEND_PLAYER_PROGRESS,
@@ -31,6 +31,10 @@ const setUpSocket = (io: Object) => {
           break
         default:
       }
+    })
+
+    socket.on(IO_DISCONNECT, (a, b) => {
+      console.log('Player disconnected!!', a, b)
     })
   })
 }

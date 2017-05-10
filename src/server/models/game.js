@@ -3,6 +3,7 @@ import nameGenerator from 'server/services/nameGenerator'
 import { isProd } from 'shared/utils'
 
 const toRedisKey = id => `games::${id}`
+const TTL_TWO_HOURS = 7200
 
 const TEXTS = isProd ? [
   {
@@ -80,7 +81,9 @@ export default class Game {
   }
 
   save() {
-    redis.connect().set(toRedisKey(this.id), this.toJson())
+    redis
+      .connect()
+      .set(toRedisKey(this.id), this.toJson(), 'EX', TTL_TWO_HOURS)
   }
 
   toJson() {
