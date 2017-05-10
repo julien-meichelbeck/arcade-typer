@@ -12,6 +12,7 @@ import thunkMiddleware from 'redux-thunk'
 import createSocketIoMiddleware from 'redux-socket.io'
 import App from 'client/App'
 import gameReducer from 'client/reducer/game'
+import globalReducer from 'client/reducer/global'
 import accountReducer from 'client/reducer/account'
 import { APP_CONTAINER_SELECTOR } from 'shared/config'
 import { isProd } from 'shared/utils'
@@ -25,7 +26,7 @@ const socketMiddleware = createSocketIoMiddleware(socket, 'SERVER/')
 
 const store = createStore(
   combineReducers(
-    { account: accountReducer, game: gameReducer },
+    { account: accountReducer, game: gameReducer, global: globalReducer },
   ),
   preloadedState,
   composeEnhancers(

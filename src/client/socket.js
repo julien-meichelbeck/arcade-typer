@@ -9,8 +9,9 @@ import {
   SET_GAME_STATE,
   UPDATE_PLAYER_PROGRESS,
   CHANGE_GAME,
-  setGameMessage,
 } from 'shared/action/games'
+
+import { setMessage } from 'shared/action/global'
 
 export const socket = socketIOClient(window.location.host)
 
@@ -23,10 +24,10 @@ const setUpSocket = (store: Object) => {
 
   socket.on(CHANGE_GAME, ({ newGame, timeBeforeGame }) => {
     let elapsedTime = 0
-    store.dispatch(setGameMessage({ message: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
+    store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
     setInterval(() => {
       elapsedTime += 1
-      store.dispatch(setGameMessage({ message: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
+      store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
     }, 1000)
     setTimeout(
       () => {

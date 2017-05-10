@@ -3,7 +3,6 @@
 import {
   SET_GAME_STATE,
   LEAVE_GAME,
-  SET_GAME_MESSAGE,
 } from 'shared/action/games'
 
 const initialState = {
@@ -16,11 +15,6 @@ export default (state: Object = initialState, action: { type: string, payload: a
       return {
         ...state,
         ...action.payload,
-      }
-    case SET_GAME_MESSAGE:
-      return {
-        ...state,
-        message: action.payload.message,
       }
     case LEAVE_GAME:
       return initialState

@@ -3,6 +3,7 @@ import injectSheet from 'react-jss'
 import Player from 'client/component/Player'
 import Container from 'client/component/Container'
 import Button from 'client/component/Button'
+import GameMessage from 'client/component/page/game/GameMessage'
 import recompact from 'shared/modules/recompact'
 import { rankedPlayers } from 'shared/utils'
 
@@ -24,7 +25,7 @@ const styles = {
     marginLeft: '-50vw',
     marginRight: '-50vw',
     minHeight: '200px',
-    padding: '14px',
+    padding: '14px 0 14px',
     background: 'rgb(38, 31, 66)',
     color: 'white',
   },
@@ -43,6 +44,7 @@ export default recompact.compose(
 }) => (
   <div className={classes.root}>
     <Container>
+      <GameMessage />
       {
         players
           .sort((pA, pB) => pB.progress - pA.progress)

@@ -104,7 +104,6 @@ export default recompact.compose(
   game: {
     players,
     id,
-    message,
     text: {
       source,
     },
@@ -127,7 +126,6 @@ export default recompact.compose(
         words={words}
         gameUrl={absoluteUrl(gameRoute(id))}
       />
-      {message}
       <GameText
         isGameReady={isGameReady}
         words={words}
