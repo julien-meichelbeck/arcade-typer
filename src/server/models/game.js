@@ -20,15 +20,6 @@ const TEXTS = isProd ? [
   },
 ] : [{ content: 'Foo is bar', author: 'Lorem Ipsum' }]
 
-const extractPlayers = ({ players }) =>
-  players.map(player => ({
-    ...player,
-    speed: 0,
-    progress: 0,
-    time: 0,
-    status: 'waiting',
-  }))
-
 export default class Game {
   static find(id, callback) {
     redis.connect().get(toRedisKey(id), (err, game) => {
@@ -42,14 +33,19 @@ export default class Game {
     })
   }
 
-  static create(previousGame = null) {
-    const game = new Game({
-      id: nameGenerator(),
-      text: TEXTS[Math.floor(Math.random() * TEXTS.length)],
-      players: previousGame ? extractPlayers(previousGame) : [],
-    })
+  static create() {
+    const game = Game.initialize()
     game.save()
     return game
+  }
+
+  static initialize(attributes) {
+    return new Game({
+      id: nameGenerator(),
+      text: TEXTS[Math.floor(Math.random() * TEXTS.length)],
+      players: [],
+      ...attributes,
+    })
   }
 
   constructor({ id, text, players }) {

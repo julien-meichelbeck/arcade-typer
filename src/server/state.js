@@ -29,12 +29,22 @@ const setPlayerProgress = (io, { gameId, player }) => {
   Game.find(gameId, (game) => {
     game.updatePlayer(player)
     sendNewGameState({ io, game: game.toObject() })
+
     const winner = rankedPlayers(game.players)[0]
     if (player.status === 'done' && winner.id === player.id) {
+      const players =
+        game.players.map(player => ({
+          ...player,
+          speed: 0,
+          progress: 0,
+          time: 0,
+          status: 'waiting',
+        }))
+
       io.to(game.id).emit(CHANGE_GAME, {
         timeBeforeGame: winner.time / 2,
         previousGame: game.toObject(),
-        newGame: Game.create(game).toObject(),
+        newGame: Game.initialize({ players }).toObject(),
       })
     }
   })
