@@ -6,7 +6,6 @@ import { createGame, joinGame, leaveGame, sendPlayerProgress } from 'shared/acti
 import { gameRoute } from 'shared/routes'
 import { wordsPerMinute, absoluteUrl } from 'shared/utils'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
-import Countdown from 'client/component/page/game/Countdown'
 import LoginForm from 'client/component/page/LoginForm'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
@@ -52,7 +51,12 @@ export default recompact.compose(
     },
   }),
   WaitingRoom,
-  Countdown,
+  recompact.withProps(({ game: { startedAgo } }) => ({
+    secondsLeft: startedAgo
+    ? 10 - Math.floor(startedAgo / 1000)
+    : null,
+  })),
+  recompact.withState('countdown', 'setCountdown', ({ secondsLeft }) => secondsLeft || 10),
   recompact.withHandlers({
     onWordInputChange: ({
       setWordInput,
@@ -104,6 +108,7 @@ export default recompact.compose(
   game: {
     players,
     id,
+    startedAgo,
     text: {
       source,
     },
@@ -115,41 +120,51 @@ export default recompact.compose(
   onWordInputChange,
   index,
   countdown,
+  setCountdown,
 }) => {
-  const isGameReady = countdown < 1
+  const arePlayersReady = startedAgo || startedAgo === 0
+  const isGameReady = arePlayersReady && countdown <= 0
   const isCorrectWord = !wordInput.length
     || words[index].substring(0, wordInput.length) === wordInput
   return (
     <div style={{ width: '100%' }}>
       <GameTrack
+        gameId={id}
         players={players}
         words={words}
         gameUrl={absoluteUrl(gameRoute(id))}
       />
-      <GameText
-        isGameReady={isGameReady}
-        words={words}
-        isCorrectWord={isCorrectWord}
-        countdown={countdown}
-        index={index}
-        account={account}
-        players={players}
-        source={source}
-      />
-      <input
-        type="text"
-        style={{
-          height: '50px',
-          width: '100%',
-          fontSize: '30px',
-          color: isCorrectWord ? 'black' : 'red',
-        }}
-        readOnly={status === 'done'}
-        autoFocus
-        placeholder={index ? null : 'Type the above text here when the game begins'}
-        value={wordInput}
-        onChange={isGameReady ? onWordInputChange : null}
-      />
+      {
+        arePlayersReady
+          ? <div>
+            <GameText
+              isGameReady={isGameReady}
+              words={words}
+              isCorrectWord={isCorrectWord}
+              countdown={countdown}
+              setCountdown={setCountdown}
+              index={index}
+              account={account}
+              players={players}
+              source={source}
+            />
+            <input
+              type="text"
+              style={{
+                height: '50px',
+                width: '100%',
+                fontSize: '30px',
+                color: isCorrectWord ? 'black' : 'red',
+              }}
+              readOnly={status === 'done'}
+              autoFocus
+              placeholder={index ? null : 'Type the above text here when the game begins'}
+              value={wordInput}
+              onChange={isGameReady ? onWordInputChange : null}
+            />
+          </div>
+        : null
+      }
     </div>
   )
 })

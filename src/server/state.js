@@ -13,7 +13,7 @@ const joinGame = (io, socket, { gameId, player }) => {
       progress: 0,
       status: 'waiting',
     })
-    sendNewGameState({ io, game: game.toObject() })
+    sendNewGameState({ io, game: game.toClientData() })
   })
 }
 
@@ -21,33 +21,38 @@ const leaveGame = (io, socket, { gameId, player }) => {
   socket.leave(gameId)
   Game.find(gameId, (game) => {
     game.removePlayer(player)
-    sendNewGameState({ io, game: game.toObject() })
+    sendNewGameState({ io, game: game.toClientData() })
   })
 }
 
 const setPlayerProgress = (io, { gameId, player }) => {
   Game.find(gameId, (game) => {
     game.updatePlayer(player)
-    sendNewGameState({ io, game: game.toObject() })
+    sendNewGameState({ io, game: game.toClientData() })
 
     const winner = rankedPlayers(game.players)[0]
     if (player.status === 'done' && winner.id === player.id) {
-      const players =
-        game.players.map(player => ({
-          ...player,
-          speed: 0,
-          progress: 0,
-          time: 0,
-          status: 'waiting',
-        }))
-
       io.to(game.id).emit(CHANGE_GAME, {
         timeBeforeGame: winner.time / 2,
-        previousGame: game.toObject(),
-        newGame: Game.initialize({ players }).toObject(),
+        previousGame: game.toClientData(),
+        nextText: {
+          content: 'TODO',
+          source: 'TODO',
+        },
       })
     }
   })
 }
 
-export { joinGame, leaveGame, setPlayerProgress }
+const MIN_READY_PLAYERS = 0
+const updatePlayer = (io, { gameId, player }) => {
+  Game.find(gameId, (game) => {
+    game.updatePlayer(player)
+    if (game.players.filter(({ status }) => status === 'ready').length > MIN_READY_PLAYERS) {
+      game.start()
+    }
+    sendNewGameState({ io, game: game.toClientData() })
+  })
+}
+
+export { joinGame, leaveGame, setPlayerProgress, updatePlayer }

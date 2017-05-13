@@ -6,12 +6,14 @@ import {
   SEND_PLAYER_PROGRESS,
   JOIN_GAME,
   LEAVE_GAME,
+  SEND_PLAYER,
 } from 'shared/action/games'
 
 import {
   joinGame,
   leaveGame,
   setPlayerProgress,
+  updatePlayer,
 } from 'server/state'
 
 /* eslint-disable no-console */
@@ -28,6 +30,9 @@ const setUpSocket = (io: Object) => {
           break
         case SEND_PLAYER_PROGRESS:
           setPlayerProgress(io, payload)
+          break
+        case SEND_PLAYER:
+          updatePlayer(io, payload)
           break
         default:
       }

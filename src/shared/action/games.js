@@ -18,8 +18,14 @@ export const sendPlayerProgress = createAction(SEND_PLAYER_PROGRESS)
 export const UPDATE_PLAYER_PROGRESS = 'CLIENT/UPDATE_PLAYER_PROGRESS'
 export const updatePlayerProgress = createAction(UPDATE_PLAYER_PROGRESS)
 
+export const SEND_PLAYER = 'SERVER/SEND_PLAYER'
+export const sendPlayer = createAction(SEND_PLAYER)
+
 export const SET_GAME_STATE = 'CLIENT/SET_GAME_STATE'
 export const setGameState = createAction(SET_GAME_STATE)
+
+export const RESET_GAME = 'RESET_GAME'
+export const resetGame = createAction(RESET_GAME)
 
 export const CREATE_GAME = 'SERVER/CREATE_GAME'
 export const createGame = () => (dispatch) => {

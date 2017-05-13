@@ -14,7 +14,32 @@ const styles = {
 }
 
 export default recompact.compose(
+  recompact.setDisplayName('Countdown'),
+  recompact.withState('intervalId', 'setIntervalId', null),
+  recompact.lifecycle({
+    componentWillMount() {
+      const {
+        setCountdown,
+        setIntervalId,
+      } = this.props
+      const intervalId = setInterval(() => {
+        setCountdown(this.props.countdown - 1)
+        if (this.props.countdown === 0) {
+          clearInterval(intervalId)
+        }
+      }, 1000)
+      setIntervalId(intervalId)
+    },
+    componentWillUnmount() {
+      clearInterval(this.props.intervalId)
+    },
+    componentDidUpdate() {
+      if (this.props.countdown < 1) {
+        clearInterval(this.props.intervalId)
+      }
+    },
+  }),
   injectSheet(styles),
-)(({ time, classes }) => (
-  <div className={classes.root}>{time === 1 ? 'GO!' : time - 1}</div>
+)(({ classes, countdown }) => (
+  <div className={classes.root}>{countdown}</div>
 ))

@@ -3,7 +3,7 @@ import nameGenerator from 'server/services/nameGenerator'
 import { isProd } from 'shared/utils'
 
 const toRedisKey = id => `games::${id}`
-const TTL_TWO_HOURS = 7200
+const TTL = 7200 // 2 Hours
 
 const TEXTS = isProd ? [
   {
@@ -34,28 +34,21 @@ export default class Game {
   }
 
   static create() {
-    const game = Game.initialize()
+    const game = new Game({
+      id: nameGenerator(),
+      text: TEXTS[Math.floor(Math.random() * TEXTS.length)],
+      players: [],
+      createdAt: Math.floor(Date.now()),
+      startedAt: null,
+    })
     game.save()
     return game
   }
 
-  static initialize(attributes) {
-    return new Game({
-      id: nameGenerator(),
-      text: TEXTS[Math.floor(Math.random() * TEXTS.length)],
-      players: [],
-      ...attributes,
-    })
-  }
-
-  constructor({ id, text, players }) {
-    this.id = id
-    this.text = text
-    this.players = players
-  }
-
-  isDone() {
-    return this.players.every(({ status }) => status === 'done')
+  constructor(attributes) {
+    Object
+      .entries(attributes)
+      .forEach(([name, value]) => { this[name] = value })
   }
 
   addPlayer(player) {
@@ -67,7 +60,11 @@ export default class Game {
   }
 
   updatePlayer(player) {
-    this.players = this.players.map(p => (p.id === player.id ? player : p))
+    this.players = this.players.map(currentPlayer => (
+      currentPlayer.id === player.id
+        ? { ...currentPlayer, ...player }
+        : currentPlayer
+    ))
     this.save()
   }
 
@@ -76,21 +73,41 @@ export default class Game {
     this.save()
   }
 
+  start() {
+    this.startedAt = Math.floor(Date.now())
+    this.save()
+  }
+
+  isDone() {
+    return this.players.every(({ status }) => status === 'done')
+  }
+
   save() {
     redis
       .connect()
-      .set(toRedisKey(this.id), this.toJson(), 'EX', TTL_TWO_HOURS)
+      .set(toRedisKey(this.id), this.toJson(), 'EX', TTL)
   }
 
   toJson() {
-    return JSON.stringify(this.toObject())
+    return JSON.stringify({
+      id: this.id,
+      text: this.text,
+      players: this.players,
+      createdAt: this.createdAt,
+      startedAt: this.startedAt,
+    })
   }
 
-  toObject() {
+  startedAgo() {
+    return this.startedAt ? Math.floor(Date.now()) - this.startedAt : null
+  }
+
+  toClientData() {
     return {
       id: this.id,
       text: this.text,
       players: this.players,
+      startedAgo: this.startedAgo(),
     }
   }
 }

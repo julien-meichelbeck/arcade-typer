@@ -1,5 +1,9 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import recompact from 'shared/modules/recompact'
 import injectSheet from 'react-jss'
+import Button from 'client/component/Button'
+import { sendPlayer } from 'shared/action/games'
 
 const styles = {
   root: {
@@ -37,8 +41,15 @@ const progression = (progressValue, progressMax) => (
   `${Math.round((progressValue / progressMax) * 100)}%`
 )
 
-export default injectSheet(styles)(({
+export default recompact.compose(
+  connect(() => ({}), dispatch => ({ dispatch })),
+  injectSheet(styles),
+)((({
+  gameId,
+  id,
+  dispatch,
   username,
+  status,
   progressValue,
   progressMax,
   speed = 0,
@@ -52,6 +63,14 @@ export default injectSheet(styles)(({
         { position > 0 ? `${position}. ` : null }
       </span>
       {username}
+      {' '}
+      <Button
+        spaced
+        dark
+        onClick={() => dispatch(sendPlayer({ gameId, player: { id, status: 'ready' } }))}
+      >
+        {status}
+      </Button>
     </p>
     <div style={{ display: 'flex' }}>
       <div className={classes.progress}>
@@ -66,4 +85,4 @@ export default injectSheet(styles)(({
       <div className={classes.speedMeter}>{speed} WPM</div>
     </div>
   </div>
-))
+)))
