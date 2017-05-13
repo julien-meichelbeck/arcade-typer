@@ -26,11 +26,16 @@ const setUpSocket = (store: Object) => {
   socket.on(CHANGE_GAME, ({ nextText, timeBeforeGame }) => {
     let elapsedTime = 0
     store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       elapsedTime += 1
       store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
     }, 1000)
-    setTimeout(() => store.dispatch(resetGame({ nextText })), timeBeforeGame)
+
+    setTimeout(() => {
+      store.dispatch(resetGame({ nextText }))
+      store.dispatch(setMessage(null))
+      clearInterval(intervalId)
+    }, timeBeforeGame)
   })
 
   socket.on(UPDATE_PLAYER_PROGRESS, (payload) => {

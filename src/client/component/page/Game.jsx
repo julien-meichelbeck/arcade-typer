@@ -1,14 +1,15 @@
 import React from 'react'
-import 'isomorphic-fetch'
 import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
-import { createGame, joinGame, leaveGame, sendPlayerProgress } from 'shared/action/games'
+import { createGame, joinGame, leaveGame } from 'shared/action/games'
 import { gameRoute } from 'shared/routes'
-import { wordsPerMinute, absoluteUrl } from 'shared/utils'
+import { absoluteUrl } from 'shared/utils'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
 import LoginForm from 'client/component/page/LoginForm'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
+import ReadyCheck from 'client/component/ReadyCheck'
+import onWordInputChange from 'client/modules/onWordInputChange'
 
 export default recompact.compose(
   recompact.withState('status', 'setStatus', 'idle'),
@@ -57,53 +58,7 @@ export default recompact.compose(
     : null,
   })),
   recompact.withState('countdown', 'setCountdown', ({ secondsLeft }) => secondsLeft || 10),
-  recompact.withHandlers({
-    onWordInputChange: ({
-      setWordInput,
-      words,
-      index,
-      setIndex,
-      startTime,
-      setStartTime,
-      setStatus,
-      game,
-      dispatch,
-      account,
-    }) => ({ target: { value } }) => {
-      const now = Date.now()
-      if (!startTime) {
-        setStartTime(now)
-        setStatus('playing')
-      }
-      const isWordWithSpace = `${words[index]} ` === value
-      const isLastWord = index + 1 === words.length && words[index] === value
-      if (isWordWithSpace || isLastWord) {
-        const time = now - startTime
-        const playerProgress = {
-          player: {
-            id: account.id,
-            username: account.username,
-            progress: index + 1,
-            speed: wordsPerMinute(time, words, index),
-            time,
-          },
-          gameId: game.id,
-        }
-        if (isWordWithSpace) {
-          setWordInput('')
-          setIndex(index + 1)
-          playerProgress.player.status = 'typing'
-        } else if (isLastWord) {
-          setWordInput('')
-          setStatus('done')
-          playerProgress.player.status = 'done'
-        }
-        dispatch(sendPlayerProgress(playerProgress))
-      } else {
-        setWordInput(value)
-      }
-    },
-  }),
+  recompact.withHandlers({ onWordInputChange }),
 )(({
   game: {
     players,
@@ -124,6 +79,7 @@ export default recompact.compose(
 }) => {
   const arePlayersReady = startedAgo || startedAgo === 0
   const isGameReady = arePlayersReady && countdown <= 0
+  const currentPlayer = players.find(({ id }) => account.id === id)
   const isCorrectWord = !wordInput.length
     || words[index].substring(0, wordInput.length) === wordInput
   return (
@@ -134,6 +90,7 @@ export default recompact.compose(
         words={words}
         gameUrl={absoluteUrl(gameRoute(id))}
       />
+      <ReadyCheck gameId={id} currentPlayer={currentPlayer} />
       {
         arePlayersReady
           ? <div>

@@ -21,6 +21,7 @@ export default (state: Object = initialState, action: { type: string, payload: a
       return {
         ...state,
         text: action.payload.nextText,
+        startedAgo: null,
         players: state.players.map(player => ({
           ...player,
           speed: 0,

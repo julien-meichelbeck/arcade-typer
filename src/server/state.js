@@ -33,22 +33,22 @@ const setPlayerProgress = (io, { gameId, player }) => {
     const winner = rankedPlayers(game.players)[0]
     if (player.status === 'done' && winner.id === player.id) {
       io.to(game.id).emit(CHANGE_GAME, {
-        timeBeforeGame: winner.time / 2,
+        timeBeforeGame: winner.time / 3,
         previousGame: game.toClientData(),
         nextText: {
           content: 'TODO',
-          source: 'TODO',
+          author: 'TODO',
         },
       })
     }
   })
 }
 
-const MIN_READY_PLAYERS = 0
+const MIN_READY_PLAYERS = 2
 const updatePlayer = (io, { gameId, player }) => {
   Game.find(gameId, (game) => {
     game.updatePlayer(player)
-    if (game.players.filter(({ status }) => status === 'ready').length > MIN_READY_PLAYERS) {
+    if (game.players.filter(({ status }) => status === 'ready').length >= MIN_READY_PLAYERS) {
       game.start()
     }
     sendNewGameState({ io, game: game.toClientData() })

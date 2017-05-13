@@ -1,9 +1,6 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
 import injectSheet from 'react-jss'
-import Button from 'client/component/Button'
-import { sendPlayer } from 'shared/action/games'
 
 const styles = {
   root: {
@@ -42,14 +39,9 @@ const progression = (progressValue, progressMax) => (
 )
 
 export default recompact.compose(
-  connect(() => ({}), dispatch => ({ dispatch })),
   injectSheet(styles),
 )((({
-  gameId,
-  id,
-  dispatch,
   username,
-  status,
   progressValue,
   progressMax,
   speed = 0,
@@ -63,14 +55,6 @@ export default recompact.compose(
         { position > 0 ? `${position}. ` : null }
       </span>
       {username}
-      {' '}
-      <Button
-        spaced
-        dark
-        onClick={() => dispatch(sendPlayer({ gameId, player: { id, status: 'ready' } }))}
-      >
-        {status}
-      </Button>
     </p>
     <div style={{ display: 'flex' }}>
       <div className={classes.progress}>
