@@ -3,18 +3,19 @@ import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
 import { createGame, joinGame, leaveGame } from 'shared/action/games'
 import { gameRoute } from 'shared/routes'
-import { absoluteUrl } from 'shared/utils'
+import { absoluteUrl, isProd } from 'shared/utils'
+import onWordInputChange from 'client/modules/onWordInputChange'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
 import LoginForm from 'client/component/page/LoginForm'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
 import ReadyCheck from 'client/component/ReadyCheck'
-import onWordInputChange from 'client/modules/onWordInputChange'
+
+const COUNTDOWN = isProd ? 10 : 3
 
 export default recompact.compose(
   recompact.withState('status', 'setStatus', 'idle'),
   recompact.withState('wordInput', 'setWordInput', ''),
-  recompact.withState('index', 'setIndex', 0),
   recompact.withState('startTime', 'setStartTime', null),
   connect(
     ({ game: gameState, account }, { game }) => ({
@@ -44,20 +45,30 @@ export default recompact.compose(
   recompact.lifecycle({
     componentWillMount() {
       const { account, game: { id: gameId }, dispatch } = this.props
-      dispatch(joinGame({ player: account, gameId }))
+      dispatch(joinGame({
+        player: {
+          id: account.id,
+          username: account.username,
+        },
+        gameId,
+      }))
     },
     componentWillUnmount() {
       const { account, game: { id: gameId }, dispatch } = this.props
-      dispatch(leaveGame({ player: account, gameId }))
+      dispatch(leaveGame({ player: { id: account.id }, gameId }))
     },
   }),
   WaitingRoom,
   recompact.withProps(({ game: { startedAgo } }) => ({
     secondsLeft: startedAgo
-    ? 10 - Math.floor(startedAgo / 1000)
+    ? COUNTDOWN - Math.floor(startedAgo / 1000)
     : null,
   })),
-  recompact.withState('countdown', 'setCountdown', ({ secondsLeft }) => secondsLeft || 10),
+  recompact.withState('countdown', 'setCountdown', ({ secondsLeft }) => secondsLeft || COUNTDOWN),
+  recompact.withState('index', 'setIndex', ({ game, account }) => {
+    const player = game.players.find(({ id }) => account.id === id)
+    return (player && player.progress) || 0
+  }),
   recompact.withHandlers({ onWordInputChange }),
 )(({
   game: {

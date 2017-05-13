@@ -1,6 +1,6 @@
 import { SET_GAME_STATE, CHANGE_GAME } from 'shared/action/games'
 import Game from 'server/models/game'
-import { rankedPlayers } from 'shared/utils'
+import { rankedPlayers, isProd } from 'shared/utils'
 
 const sendNewGameState = ({ io, game }) => io.to(game.id).emit(SET_GAME_STATE, game)
 
@@ -25,26 +25,7 @@ const leaveGame = (io, socket, { gameId, player }) => {
   })
 }
 
-const setPlayerProgress = (io, { gameId, player }) => {
-  Game.find(gameId, (game) => {
-    game.updatePlayer(player)
-    sendNewGameState({ io, game: game.toClientData() })
-
-    const winner = rankedPlayers(game.players)[0]
-    if (player.status === 'done' && winner.id === player.id) {
-      io.to(game.id).emit(CHANGE_GAME, {
-        timeBeforeGame: winner.time / 3,
-        previousGame: game.toClientData(),
-        nextText: {
-          content: 'TODO',
-          author: 'TODO',
-        },
-      })
-    }
-  })
-}
-
-const MIN_READY_PLAYERS = 2
+const MIN_READY_PLAYERS = isProd ? 2 : 1
 const updatePlayer = (io, { gameId, player }) => {
   Game.find(gameId, (game) => {
     game.updatePlayer(player)
@@ -52,7 +33,23 @@ const updatePlayer = (io, { gameId, player }) => {
       game.start()
     }
     sendNewGameState({ io, game: game.toClientData() })
+
+    if (player.status === 'done') {
+      const winner = rankedPlayers(game.players)[0]
+      const timeBeforeGame = winner.time / 3
+      const nextGame = game.nextGame()
+      if (player.status === 'done' && winner.id === player.id) {
+        io.to(game.id).emit(CHANGE_GAME, {
+          timeBeforeGame: timeBeforeGame + 1,
+          nextGame: nextGame.toClientData(),
+        })
+      }
+
+      setTimeout(() => {
+        nextGame.save()
+      }, timeBeforeGame)
+    }
   })
 }
 
-export { joinGame, leaveGame, setPlayerProgress, updatePlayer }
+export { joinGame, leaveGame, updatePlayer }

@@ -23,7 +23,7 @@ const setUpSocket = (store: Object) => {
     store.dispatch(setGameState(newGameState))
   })
 
-  socket.on(CHANGE_GAME, ({ nextText, timeBeforeGame }) => {
+  socket.on(CHANGE_GAME, ({ timeBeforeGame, nextGame }) => {
     let elapsedTime = 0
     store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
     const intervalId = setInterval(() => {
@@ -32,7 +32,8 @@ const setUpSocket = (store: Object) => {
     }, 1000)
 
     setTimeout(() => {
-      store.dispatch(resetGame({ nextText }))
+      window.location = `/games/${nextGame.id}`
+      // store.dispatch(resetGame({ nextText }))
       store.dispatch(setMessage(null))
       clearInterval(intervalId)
     }, timeBeforeGame)

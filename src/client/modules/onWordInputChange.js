@@ -1,4 +1,4 @@
-import { sendPlayerProgress } from 'shared/action/games'
+import { sendPlayer } from 'shared/action/games'
 import { wordsPerMinute } from 'shared/utils'
 
 export default ({
@@ -25,7 +25,6 @@ export default ({
     const playerProgress = {
       player: {
         id: account.id,
-        username: account.username,
         progress: index + 1,
         speed: wordsPerMinute(time, words, index),
         time,
@@ -41,7 +40,7 @@ export default ({
       setStatus('done')
       playerProgress.player.status = 'done'
     }
-    dispatch(sendPlayerProgress(playerProgress))
+    dispatch(sendPlayer(playerProgress))
   } else {
     setWordInput(value)
   }

@@ -98,6 +98,16 @@ export default class Game {
     })
   }
 
+  nextGame() {
+    return new Game({
+      id: this.id,
+      createdAt: this.createdAt,
+      text: TEXTS[Math.floor(Math.random() * TEXTS.length)],
+      players: [],
+      startedAt: null,
+    })
+  }
+
   startedAgo() {
     return this.startedAt ? Math.floor(Date.now()) - this.startedAt : null
   }

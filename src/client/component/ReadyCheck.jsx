@@ -13,29 +13,29 @@ const styles = {
 }
 
 
-const handleKeyDown = onPlayerReady => (e) => {
+const onPlayerReady = ({ dispatch, gameId, currentPlayer }) => (e) => {
   if (e.code === 'Enter' || e.code === 'Space') {
-    onPlayerReady()
+    dispatch(sendPlayer({ gameId, player: { id: currentPlayer.id, status: 'ready' } }))
+    document.removeEventListener('keydown', onPlayerReady)
   }
 }
 
 export default recompact.compose(
   connect(() => ({}), dispatch => ({ dispatch })),
-  recompact.withProps(({ currentPlayer }) => ({
-    isPlayerWaiting: currentPlayer && currentPlayer.status === 'waiting',
-  })),
-  recompact.withHandlers({
-    onPlayerReady: ({ dispatch, gameId, currentPlayer }) =>
-      () => dispatch(sendPlayer({ gameId, player: { id: currentPlayer.id, status: 'ready' } })),
-  }),
+  recompact.withProps(({ currentPlayer }) => ({ isPlayerWaiting: currentPlayer && currentPlayer.status === 'waiting' })),
+  recompact.withHandlers({ onPlayerReady }),
+  recompact.withState('readyCheckListener', 'setReadyCheckListener', true),
   recompact.lifecycle({
-    componentWillMount() {
-      const { onPlayerReady } = this.props
-      document.addEventListener('keydown', handleKeyDown(onPlayerReady))
+    componentWillUpdate(newProps) {
+      const { onPlayerReady, isPlayerWaiting, readyCheckListener, setReadyCheckListener } = newProps
+      if (isPlayerWaiting && readyCheckListener) {
+        document.addEventListener('keydown', onPlayerReady)
+        setReadyCheckListener(false)
+      }
     },
     componentWillUnmount() {
       const { onPlayerReady } = this.props
-      document.removeEventListener('keydown', handleKeyDown(onPlayerReady))
+      document.removeEventListener('keydown', onPlayerReady)
     },
   }),
   injectSheet(styles),
