@@ -35,6 +35,7 @@ export default recompact.compose(
   injectSheet(styles),
   recompact.withState('showShareUrl', 'setShowShareUrl', false),
 )(({
+  gameId,
   players,
   words,
   classes,
@@ -51,6 +52,7 @@ export default recompact.compose(
           .map((player, index) =>
             <Player
               key={player.id}
+              gameId={gameId}
               otherPlayers={players}
               progressValue={player.progress}
               progressMax={words.length}

@@ -1,24 +1,20 @@
-// @flow
-
 import { IO_CONNECT, IO_DISCONNECT } from 'shared/config'
 
 import {
-  SEND_PLAYER_PROGRESS,
   JOIN_GAME,
   LEAVE_GAME,
+  SEND_PLAYER,
 } from 'shared/action/games'
 
 import {
   joinGame,
   leaveGame,
-  setPlayerProgress,
+  updatePlayer,
 } from 'server/state'
 
-/* eslint-disable no-console */
-const setUpSocket = (io: Object) => {
+export default (io) => {
   io.on(IO_CONNECT, (socket) => {
     socket.on('action', ({ type, payload }) => {
-      console.log('Action received: ', type, payload)
       switch (type) {
         case JOIN_GAME:
           joinGame(io, socket, payload)
@@ -26,18 +22,13 @@ const setUpSocket = (io: Object) => {
         case LEAVE_GAME:
           leaveGame(io, socket, payload)
           break
-        case SEND_PLAYER_PROGRESS:
-          setPlayerProgress(io, payload)
+        case SEND_PLAYER:
+          updatePlayer(io, payload)
           break
         default:
       }
     })
 
-    socket.on(IO_DISCONNECT, (a, b) => {
-      console.log('Player disconnected!!', a, b)
-    })
+    socket.on(IO_DISCONNECT, () => { })
   })
 }
-/* eslint-enable no-console */
-
-export default setUpSocket

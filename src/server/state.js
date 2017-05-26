@@ -1,6 +1,6 @@
 import { SET_GAME_STATE, CHANGE_GAME } from 'shared/action/games'
 import Game from 'server/models/game'
-import { rankedPlayers } from 'shared/utils'
+import { rankedPlayers, isProd } from 'shared/utils'
 
 const sendNewGameState = ({ io, game }) => io.to(game.id).emit(SET_GAME_STATE, game)
 
@@ -13,7 +13,7 @@ const joinGame = (io, socket, { gameId, player }) => {
       progress: 0,
       status: 'waiting',
     })
-    sendNewGameState({ io, game: game.toObject() })
+    sendNewGameState({ io, game: game.toClientData() })
   })
 }
 
@@ -21,23 +21,35 @@ const leaveGame = (io, socket, { gameId, player }) => {
   socket.leave(gameId)
   Game.find(gameId, (game) => {
     game.removePlayer(player)
-    sendNewGameState({ io, game: game.toObject() })
+    sendNewGameState({ io, game: game.toClientData() })
   })
 }
 
-const setPlayerProgress = (io, { gameId, player }) => {
+const MIN_READY_PLAYERS = isProd ? 2 : 1
+const updatePlayer = (io, { gameId, player }) => {
   Game.find(gameId, (game) => {
     game.updatePlayer(player)
-    sendNewGameState({ io, game: game.toObject() })
-    const winner = rankedPlayers(game.players)[0]
-    if (player.status === 'done' && winner.id === player.id) {
-      io.to(game.id).emit(CHANGE_GAME, {
-        timeBeforeGame: winner.time / 2,
-        previousGame: game.toObject(),
-        newGame: Game.create(game).toObject(),
-      })
+    if (game.players.filter(({ status }) => status === 'ready').length >= MIN_READY_PLAYERS) {
+      game.start()
+    }
+    sendNewGameState({ io, game: game.toClientData() })
+
+    if (player.status === 'done') {
+      const winner = rankedPlayers(game.players)[0]
+      const timeBeforeGame = winner.time / 3
+      const nextGame = game.nextGame()
+      if (player.status === 'done' && winner.id === player.id) {
+        io.to(game.id).emit(CHANGE_GAME, {
+          timeBeforeGame: timeBeforeGame + 1,
+          nextGame: nextGame.toClientData(),
+        })
+      }
+
+      setTimeout(() => {
+        nextGame.save()
+      }, timeBeforeGame)
     }
   })
 }
 
-export { joinGame, leaveGame, setPlayerProgress }
+export { joinGame, leaveGame, updatePlayer }

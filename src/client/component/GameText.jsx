@@ -22,6 +22,7 @@ export default injectSheet(styles)(({
   isGameReady,
   words,
   countdown,
+  setCountdown,
   index,
   account,
   players,
@@ -29,7 +30,7 @@ export default injectSheet(styles)(({
   classes,
 }) => (
   <div className={classes.root}>
-    { !isGameReady ? <CountdownTimer time={countdown} /> : null }
+    { !isGameReady ? <CountdownTimer setCountdown={setCountdown} countdown={countdown} /> : null }
     {
       words.map((word, i) =>
         <Word

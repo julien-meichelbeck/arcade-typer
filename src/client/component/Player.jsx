@@ -1,4 +1,5 @@
 import React from 'react'
+import recompact from 'shared/modules/recompact'
 import injectSheet from 'react-jss'
 
 const styles = {
@@ -37,7 +38,9 @@ const progression = (progressValue, progressMax) => (
   `${Math.round((progressValue / progressMax) * 100)}%`
 )
 
-export default injectSheet(styles)(({
+export default recompact.compose(
+  injectSheet(styles),
+)((({
   username,
   progressValue,
   progressMax,
@@ -66,4 +69,4 @@ export default injectSheet(styles)(({
       <div className={classes.speedMeter}>{speed} WPM</div>
     </div>
   </div>
-))
+)))
