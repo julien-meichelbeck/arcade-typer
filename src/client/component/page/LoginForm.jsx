@@ -1,13 +1,13 @@
 import 'isomorphic-fetch'
 
 import React from 'react'
-import { browserHistory } from 'react-router'
 import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
 import { saveAccount } from 'shared/action/accounts'
 import Button from 'client/component/Button'
 import Input from 'client/component/Input'
 import Text from 'client/component/Text'
+import history from 'client/modules/history'
 import { gameRoute } from 'shared/routes'
 
 export default recompact.compose(
@@ -24,7 +24,7 @@ export default recompact.compose(
         .then((data) => {
           dispatch(saveAccount(data.account))
           if (game && game.id) {
-            browserHistory.push(gameRoute(game.id))
+            history.push(gameRoute(game.id))
           }
         })
         .catch(error => console.log(error))
