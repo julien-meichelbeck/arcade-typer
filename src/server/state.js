@@ -8,11 +8,7 @@ const joinGame = (io, socket, { gameId, player }) => {
   socket.join(gameId)
 
   Game.find(gameId, (game) => {
-    game.addPlayer({
-      ...player,
-      progress: 0,
-      status: 'waiting',
-    })
+    game.addPlayer(player)
     sendNewGameState({ io, game: game.toClientData() })
   })
 }

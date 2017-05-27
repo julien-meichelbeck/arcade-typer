@@ -7,15 +7,6 @@ import GameMessage from 'client/component/page/game/GameMessage'
 import recompact from 'shared/modules/recompact'
 import { rankedPlayers } from 'shared/utils'
 
-const COLORS = [
-  'rgb(170, 111, 252)',
-  'rgb(135, 255, 59)',
-  'rgb(250, 113, 97)',
-  'rgb(237, 241, 120)',
-  'rgb(43, 255, 234)',
-  'rgb(210, 0, 142)',
-]
-
 const styles = {
   root: {
     width: '100vw',
@@ -49,7 +40,7 @@ export default recompact.compose(
       {
         players
           .sort((pA, pB) => pB.progress - pA.progress)
-          .map((player, index) =>
+          .map(player =>
             <Player
               key={player.id}
               gameId={gameId}
@@ -57,7 +48,7 @@ export default recompact.compose(
               progressValue={player.progress}
               progressMax={words.length}
               position={rankedPlayers(players).findIndex(({ id }) => player.id === id) + 1}
-              color={COLORS[index]}
+              color={player.color}
               {...player}
             />)
       }
