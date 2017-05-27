@@ -25,46 +25,31 @@ const styles = {
 export default recompact.compose(
   injectSheet(styles),
   recompact.withState('showShareUrl', 'setShowShareUrl', false),
-)(({
-  gameId,
-  players,
-  words,
-  classes,
-  gameUrl,
-  showShareUrl,
-  setShowShareUrl,
-}) => (
+)(({ gameId, players, words, classes, gameUrl, showShareUrl, setShowShareUrl }) => (
   <div className={classes.root}>
     <Container>
       <GameMessage />
-      {
-        players
-          .sort((pA, pB) => pB.progress - pA.progress)
-          .map(player =>
-            <Player
-              key={player.id}
-              gameId={gameId}
-              otherPlayers={players}
-              progressValue={player.progress}
-              progressMax={words.length}
-              position={rankedPlayers(players).findIndex(({ id }) => player.id === id) + 1}
-              color={player.color}
-              {...player}
-            />)
-      }
+      {players
+        .sort((pA, pB) => pB.progress - pA.progress)
+        .map(player => (
+          <Player
+            key={player.id}
+            gameId={gameId}
+            otherPlayers={players}
+            progressValue={player.progress}
+            progressMax={words.length}
+            position={rankedPlayers(players).findIndex(({ id }) => player.id === id) + 1}
+            color={player.color}
+            {...player}
+          />
+        ))}
       <Button dark onClick={() => setShowShareUrl(!showShareUrl)}>Add a player</Button>
-      {
-        showShareUrl
-          ? <div>
-            <p>{'Play with your friends!'}</p>
-            <input
-              readOnly
-              value={gameUrl}
-              style={{ width: '100%', fontSize: '20px' }}
-            />
-          </div>
-          : null
-      }
+      {showShareUrl
+        ? <div>
+          <p>{'Play with your friends!'}</p>
+          <input readOnly value={gameUrl} style={{ width: '100%', fontSize: '20px' }} />
+        </div>
+        : null}
     </Container>
   </div>
 ))

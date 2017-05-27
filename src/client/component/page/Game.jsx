@@ -11,7 +11,7 @@ import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
 import ReadyCheck from 'client/component/ReadyCheck'
 
-const COUNTDOWN = isProd ? 10 : 3
+const COUNTDOWN = isProd ? 10 : 2
 
 export default recompact.compose(
   recompact.withState('status', 'setStatus', 'idle'),
@@ -24,10 +24,7 @@ export default recompact.compose(
     }),
     dispatch => ({ dispatch }),
   ),
-  recompact.branch(
-    ({ account }) => !account || !account.username,
-    () => () => <LoginForm />,
-  ),
+  recompact.branch(({ account }) => !account || !account.username, () => () => <LoginForm />),
   recompact.lifecycle({
     componentWillMount() {
       const { game, dispatch } = this.props
@@ -45,13 +42,15 @@ export default recompact.compose(
   recompact.lifecycle({
     componentWillMount() {
       const { account, game: { id: gameId }, dispatch } = this.props
-      dispatch(joinGame({
-        player: {
-          id: account.id,
-          username: account.username,
-        },
-        gameId,
-      }))
+      dispatch(
+        joinGame({
+          player: {
+            id: account.id,
+            username: account.username,
+          },
+          gameId,
+        }),
+      )
     },
     componentWillUnmount() {
       const { account, game: { id: gameId }, dispatch } = this.props
@@ -60,9 +59,7 @@ export default recompact.compose(
   }),
   WaitingRoom,
   recompact.withProps(({ game: { startedAgo } }) => ({
-    secondsLeft: startedAgo
-    ? COUNTDOWN - Math.floor(startedAgo / 1000)
-    : null,
+    secondsLeft: startedAgo ? COUNTDOWN - Math.floor(startedAgo / 1000) : null,
   })),
   recompact.withState('countdown', 'setCountdown', ({ secondsLeft }) => secondsLeft || COUNTDOWN),
   recompact.withState('index', 'setIndex', ({ game, account }) => {
@@ -70,40 +67,33 @@ export default recompact.compose(
     return (player && player.progress) || 0
   }),
   recompact.withHandlers({ onWordInputChange }),
-)(({
-  game: {
-    players,
-    id,
-    startedAgo,
-    text: {
-      source,
-    },
-  },
-  status,
-  account,
-  words,
-  wordInput,
-  onWordInputChange,
-  index,
-  countdown,
-  setCountdown,
-}) => {
-  const arePlayersReady = startedAgo || startedAgo === 0
-  const isGameReady = arePlayersReady && countdown <= 0
-  const currentPlayer = players.find(({ id }) => account.id === id)
-  const isCorrectWord = !wordInput.length
-    || words[index].substring(0, wordInput.length) === wordInput
-  return (
-    <div style={{ width: '100%' }}>
-      <GameTrack
-        gameId={id}
-        players={players}
-        words={words}
-        gameUrl={absoluteUrl(gameRoute(id))}
-      />
-      <ReadyCheck gameId={id} currentPlayer={currentPlayer} />
-      {
-        arePlayersReady
+)(
+  ({
+    game: { players, id, startedAgo, text: { source } },
+    status,
+    account,
+    words,
+    wordInput,
+    onWordInputChange,
+    index,
+    countdown,
+    setCountdown,
+  }) => {
+    const arePlayersReady = startedAgo || startedAgo === 0
+    const isGameReady = arePlayersReady && countdown <= 0
+    const currentPlayer = players.find(({ id }) => account.id === id)
+    const isCorrectWord =
+      !wordInput.length || words[index].substring(0, wordInput.length) === wordInput
+    return (
+      <div style={{ width: '100%' }}>
+        <GameTrack
+          gameId={id}
+          players={players}
+          words={words}
+          gameUrl={absoluteUrl(gameRoute(id))}
+        />
+        <ReadyCheck gameId={id} currentPlayer={currentPlayer} />
+        {arePlayersReady
           ? <div>
             <GameText
               isGameReady={isGameReady}
@@ -131,8 +121,8 @@ export default recompact.compose(
               onChange={isGameReady ? onWordInputChange : null}
             />
           </div>
-        : null
-      }
-    </div>
-  )
-})
+          : null}
+      </div>
+    )
+  },
+)
