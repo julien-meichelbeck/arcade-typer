@@ -126,12 +126,21 @@ export default class Game {
     return this.startedAt ? Math.floor(Date.now()) - this.startedAt : null
   }
 
+  calculateNextGameTime(winner) {
+    this.nextGameStartTime = Math.floor(Date.now()) + winner.time / 3
+  }
+
+  timeLeftBeforeNextGame() {
+    return this.nextGameStartTime ? this.nextGameStartTime - Math.floor(Date.now()) : null
+  }
+
   toClientData() {
     return {
       id: this.id,
       text: this.text,
       players: this.players,
       startedAgo: this.startedAgo(),
+      timeLeftBeforeNextGame: this.timeLeftBeforeNextGame(),
     }
   }
 }

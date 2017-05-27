@@ -20,15 +20,35 @@ export const socket = socketIOClient(window.location.host)
 // eslint-disable-next-line no-unused-vars
 const setUpSocket = (store: Object) => {
   socket.on(SET_GAME_STATE, (newGameState) => {
+    if (newGameState.timeLeftBeforeNextGame) {
+      store.dispatch(
+        setMessage({
+          text: `Next game will start in ${Math.round(newGameState.timeLeftBeforeNextGame / 1000)} seconds.`,
+        }),
+      )
+      setTimeout(() => {
+        window.location = `/games/${newGameState.id}`
+        // store.dispatch(resetGame({ nextText }))
+        store.dispatch(setMessage(null))
+      }, newGameState.timeLeftBeforeNextGame)
+    }
     store.dispatch(setGameState(newGameState))
   })
 
   socket.on(CHANGE_GAME, ({ timeBeforeGame, nextGame }) => {
     let elapsedTime = 0
-    store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
+    store.dispatch(
+      setMessage({
+        text: `Next game will start in ${Math.round(timeBeforeGame / 1000 - elapsedTime)} seconds.`,
+      }),
+    )
     const intervalId = setInterval(() => {
       elapsedTime += 1
-      store.dispatch(setMessage({ text: `Next game will start in ${Math.round((timeBeforeGame / 1000) - elapsedTime)} seconds.` }))
+      store.dispatch(
+        setMessage({
+          text: `Next game will start in ${Math.round(timeBeforeGame / 1000 - elapsedTime)} seconds.`,
+        }),
+      )
     }, 1000)
 
     setTimeout(() => {
