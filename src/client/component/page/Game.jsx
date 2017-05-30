@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
-import { joinGame, leaveGame } from 'shared/action/games'
+import { joinGame, leaveGame } from 'shared/actions/games'
 import { gameRoute } from 'shared/routes'
 import { absoluteUrl, isProd } from 'shared/utils'
 import onWordInputChange from 'client/modules/onWordInputChange'

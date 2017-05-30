@@ -1,7 +1,7 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
 import { connect } from 'react-redux'
-import { sendPlayer } from 'shared/action/games'
+import { sendPlayer } from 'shared/actions/games'
 import Text from 'client/component/Text'
 import injectSheet from 'react-jss'
 

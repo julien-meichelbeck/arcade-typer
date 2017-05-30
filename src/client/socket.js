@@ -1,7 +1,7 @@
 // @flow
 
 import socketIOClient from 'socket.io-client'
-import { setGameState, SET_GAME_STATE } from 'shared/action/games'
+import { setGameState, SET_GAME_STATE } from 'shared/actions/games'
 
 import { setMessage } from 'shared/action/global'
 

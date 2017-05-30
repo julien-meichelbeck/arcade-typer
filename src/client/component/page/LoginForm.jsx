@@ -7,17 +7,18 @@ import { saveAccount } from 'shared/action/accounts'
 import Button from 'client/component/Button'
 import Input from 'client/component/Input'
 import Text from 'client/component/Text'
-import history from 'client/modules/history'
 import { gameRoute } from 'shared/routes'
+import { withRouter } from 'react-router'
 
 export default recompact.compose(
+  withRouter,
   connect(
     ({ game }) => ({ game }),
     dispatch => ({ dispatch }),
   ),
   recompact.withState('username', 'setUsername', ''),
   recompact.withHandlers({
-    handleSubmit: (({ dispatch, username, password, game }) => (event) => {
+    handleSubmit: (({ dispatch, username, password, game, history }) => (event) => {
       event.preventDefault()
       fetch(`/login?username=${username}&password=${password}`, { method: 'POST', credentials: 'include' })
         .then(response => response.json())

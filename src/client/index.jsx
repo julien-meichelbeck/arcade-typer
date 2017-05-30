@@ -3,10 +3,9 @@
 import 'babel-polyfill'
 
 import React from 'react'
-import history from 'client/modules/history'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
-import { Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunkMiddleware from 'redux-thunk'
@@ -40,11 +39,11 @@ const rootEl = document.querySelector(APP_CONTAINER_SELECTOR)
 
 const wrapApp = (AppComponent, reduxStore) =>
   <Provider store={reduxStore}>
-    <Router history={history}>
+    <BrowserRouter>
       <AppContainer>
         <AppComponent />
       </AppContainer>
-    </Router>
+    </BrowserRouter>
   </Provider>
 
 ReactDOM.render(wrapApp(App, store), rootEl)
