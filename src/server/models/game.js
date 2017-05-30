@@ -127,7 +127,7 @@ export default class Game {
   }
 
   calculateNextGameTime(winner) {
-    this.nextGameStartTime = Math.floor(Date.now()) + winner.time / 3
+    this.nextGameStartTime = Math.floor(Date.now()) + winner.time * 0.75
   }
 
   timeLeftBeforeNextGame() {
