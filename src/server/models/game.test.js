@@ -37,10 +37,7 @@ test('updatePlayer', () => {
     username: 'Clark Kent',
   })
   game.updatePlayer({ id: 1, username: 'Foo' })
-  expect(game.players).toEqual([
-    { id: 1, username: 'Foo' },
-    { id: 2, username: 'Clark Kent' },
-  ])
+  expect(game.players).toEqual([{ id: 1, username: 'Foo' }, { id: 2, username: 'Clark Kent' }])
 })
 
 test('isDone', () => {
@@ -55,12 +52,14 @@ test('isDone', () => {
 })
 
 test('toJson', () => {
-  expect(game.toJson()).toEqual('{"id":1,"text":"This is a placeholder text","players":[{"id":1,"username":"Bruce Wayne"}]}')
+  expect(game.toJson()).toEqual(
+    '{"id":1,"text":"This is a placeholder text","players":[{"id":1,"username":"Bruce Wayne"}]}',
+  )
 })
 
 test('create', () => {
   const newGame = Game.create()
-  Game.find(newGame.id, (game) => {
+  Game.find(newGame.id).then((game) => {
     expect(game.toObject()).toEqual(newGame.toObject())
   })
 })

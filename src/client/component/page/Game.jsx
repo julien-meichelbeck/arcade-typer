@@ -3,15 +3,13 @@ import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
 import { joinGame, leaveGame } from 'shared/actions/games'
 import { gameRoute } from 'shared/routes'
-import { absoluteUrl, isProd } from 'shared/utils'
+import { absoluteUrl } from 'shared/utils'
 import onWordInputChange from 'client/modules/onWordInputChange'
 import WaitingRoom from 'client/component/page/game/WaitingRoom'
 import LoginForm from 'client/component/page/LoginForm'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
 import ReadyCheck from 'client/component/ReadyCheck'
-
-const COUNTDOWN = isProd ? 10 : 2
 
 export default recompact.compose(
   connect(({ account, game }) => ({ account, game }), dispatch => ({ dispatch })),
@@ -36,12 +34,10 @@ export default recompact.compose(
   recompact.withState('wordInput', 'setWordInput', ''),
   recompact.withState('startTime', 'setStartTime', null),
   WaitingRoom,
-  recompact.withProps(({ account, game: { players, text, startedAgo } }) => ({
+  recompact.withProps(({ account, game: { players, text } }) => ({
     words: text.content.split(' '),
-    secondsLeft: startedAgo ? COUNTDOWN - Math.floor(startedAgo / 1000) : null,
     currentPlayer: players.find(({ id }) => account.id === id),
   })),
-  recompact.withState('countdown', 'setCountdown', ({ secondsLeft }) => secondsLeft || COUNTDOWN),
   recompact.withState(
     'index',
     'setIndex',
@@ -50,18 +46,15 @@ export default recompact.compose(
   recompact.withHandlers({ onWordInputChange }),
 )(
   ({
-    game: { players, id, startedAgo, text: { source } },
+    game: { players, id, text: { source }, countdown },
     status,
     account,
     words,
     wordInput,
     onWordInputChange,
     index,
-    countdown,
-    setCountdown,
   }) => {
-    const arePlayersReady = startedAgo || startedAgo === 0
-    const isGameReady = arePlayersReady && countdown <= 0
+    const isGameReady = countdown && countdown <= 0
     const currentPlayer = players.find(({ id }) => account.id === id)
     const isCorrectWord =
       !wordInput.length || words[index].substring(0, wordInput.length) === wordInput
@@ -74,14 +67,13 @@ export default recompact.compose(
           gameUrl={absoluteUrl(gameRoute(id))}
         />
         <ReadyCheck gameId={id} currentPlayer={currentPlayer} />
-        {arePlayersReady
+        {countdown !== null
           ? <div>
             <GameText
               isGameReady={isGameReady}
               words={words}
               isCorrectWord={isCorrectWord}
               countdown={countdown}
-              setCountdown={setCountdown}
               index={index}
               account={account}
               players={players}

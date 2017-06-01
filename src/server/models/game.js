@@ -4,6 +4,7 @@ import { isProd, sample } from 'shared/utils'
 
 const toRedisKey = id => `games::${id}`
 const TTL = 7200 // 2 Hours
+const COUNTDOWN = isProd ? 10 : 2
 const COLORS = [
   'rgb(170, 111, 252)',
   'rgb(135, 255, 59)',
@@ -30,15 +31,15 @@ const TEXTS = isProd
   : [{ content: 'Foo is bar', author: 'Lorem Ipsum' }]
 
 export default class Game {
-  static find(id, callback) {
-    redis.connect().get(toRedisKey(id), (err, game) => {
-      if (!err && game) {
-        callback(new Game(JSON.parse(game)))
-      } else if (!game) {
-        console.error(`Could not find game ${toRedisKey(id)}`)
-      } else {
-        console.error(err)
-      }
+  static async find(id) {
+    return new Promise((resolve, reject) => {
+      redis.connect().get(toRedisKey(id), (error, game) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(new Game(JSON.parse(game)))
+        }
+      })
     })
   }
 
@@ -48,7 +49,7 @@ export default class Game {
       text: sample(TEXTS),
       players: [],
       createdAt: Math.floor(Date.now()),
-      startedAt: null,
+      countdown: null,
     })
     game.save()
     return game
@@ -58,6 +59,10 @@ export default class Game {
     Object.entries(attributes).forEach(([name, value]) => {
       this[name] = value
     })
+  }
+
+  async reload() {
+    return Game.find(this.id)
   }
 
   addPlayer(player) {
@@ -89,11 +94,6 @@ export default class Game {
     this.save()
   }
 
-  start() {
-    this.startedAt = Math.floor(Date.now())
-    this.save()
-  }
-
   isDone() {
     return this.players.every(({ status }) => status === 'done')
   }
@@ -102,14 +102,8 @@ export default class Game {
     redis.connect().set(toRedisKey(this.id), this.toJson(), 'EX', TTL)
   }
 
-  toJson() {
-    return JSON.stringify({
-      id: this.id,
-      text: this.text,
-      players: this.players,
-      createdAt: this.createdAt,
-      startedAt: this.startedAt,
-    })
+  countdownTick() {
+    this.countdown = this.countdown === null ? COUNTDOWN : this.countdown - 1
   }
 
   nextGame() {
@@ -117,21 +111,15 @@ export default class Game {
       id: this.id,
       createdAt: this.createdAt,
       text: sample(TEXTS),
-      players: [],
-      startedAt: null,
+      countdown: null,
+      players: this.players.map(player => ({
+        ...player,
+        progress: 0,
+        speed: 0,
+        time: 0,
+        status: 'waiting',
+      })),
     })
-  }
-
-  startedAgo() {
-    return this.startedAt ? Math.floor(Date.now()) - this.startedAt : null
-  }
-
-  calculateNextGameTime(winner) {
-    this.nextGameStartTime = Math.floor(Date.now()) + winner.time * 0.75
-  }
-
-  timeLeftBeforeNextGame() {
-    return this.nextGameStartTime ? this.nextGameStartTime - Math.floor(Date.now()) : null
   }
 
   toClientData() {
@@ -139,8 +127,17 @@ export default class Game {
       id: this.id,
       text: this.text,
       players: this.players,
-      startedAgo: this.startedAgo(),
-      timeLeftBeforeNextGame: this.timeLeftBeforeNextGame(),
+      countdown: this.countdown,
     }
+  }
+
+  toJson() {
+    return JSON.stringify({
+      id: this.id,
+      text: this.text,
+      players: this.players,
+      createdAt: this.createdAt,
+      countdown: this.countdown,
+    })
   }
 }

@@ -22,7 +22,7 @@ import setUpSocket, { socket } from 'client/socket'
 const composeEnhancers = (isProd ? null : window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 const preloadedState = window.__PRELOADED_STATE__
 /* eslint-enable no-underscore-dangle */
-const socketMiddleware = createSocketIoMiddleware(socket, 'SERVER/')
+const socketMiddleware = createSocketIoMiddleware(socket, 'TO_SERVER/')
 
 const store = createStore(
   combineReducers(
