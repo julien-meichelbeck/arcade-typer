@@ -4,7 +4,7 @@ import {
   JOIN_GAME,
   LEAVE_GAME,
   SEND_PLAYER,
-} from 'shared/action/games'
+} from 'shared/actions/games'
 
 import {
   joinGame,

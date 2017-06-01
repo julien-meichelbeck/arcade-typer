@@ -4,7 +4,7 @@ import {
   SET_GAME_STATE,
   LEAVE_GAME,
   RESET_GAME,
-} from 'shared/action/games'
+} from 'shared/actions/games'
 
 const initialState = {
   players: [],

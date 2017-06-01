@@ -1,4 +1,4 @@
-import { SET_GAME_STATE, CHANGE_GAME } from 'shared/action/games'
+import { SET_GAME_STATE, CHANGE_GAME } from 'shared/actions/games'
 import Game from 'server/models/game'
 import { rankedPlayers, isProd } from 'shared/utils'
 
@@ -28,23 +28,19 @@ const updatePlayer = (io, { gameId, player }) => {
     if (game.players.filter(({ status }) => status === 'ready').length >= MIN_READY_PLAYERS) {
       game.start()
     }
-    sendNewGameState({ io, game: game.toClientData() })
 
     if (player.status === 'done') {
       const winner = rankedPlayers(game.players)[0]
-      const timeBeforeGame = winner.time / 3
-      const nextGame = game.nextGame()
-      if (player.status === 'done' && winner.id === player.id) {
-        io.to(game.id).emit(CHANGE_GAME, {
-          timeBeforeGame: timeBeforeGame + 1,
-          nextGame: nextGame.toClientData(),
-        })
-      }
+      if (winner.id === player.id) {
+        const nextGame = game.nextGame()
+        game.calculateNextGameTime(winner)
 
-      setTimeout(() => {
-        nextGame.save()
-      }, timeBeforeGame)
+        setTimeout(() => {
+          nextGame.save()
+        }, winner.time / 3)
+      }
     }
+    sendNewGameState({ io, game: game.toClientData() })
   })
 }
 

@@ -1,4 +1,4 @@
-import { sendPlayer } from 'shared/action/games'
+import { sendPlayer } from 'shared/actions/games'
 import { wordsPerMinute } from 'shared/utils'
 
 export default ({
