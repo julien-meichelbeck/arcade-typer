@@ -1,10 +1,4 @@
-// @flow
-
-import {
-  SET_GAME_STATE,
-  LEAVE_GAME,
-  RESET_GAME,
-} from 'shared/actions/games'
+import { SET_GAME_STATE, LEAVE_GAME, RESET_GAME } from 'shared/actions/games'
 
 const initialState = {
   players: [],

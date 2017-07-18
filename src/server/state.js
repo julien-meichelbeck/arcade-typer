@@ -1,4 +1,4 @@
-import { SET_GAME_STATE, CHANGE_GAME } from 'shared/actions/games'
+import { SET_GAME_STATE } from 'shared/actions/games'
 import Game from 'server/models/game'
 import { rankedPlayers, isProd } from 'shared/utils'
 

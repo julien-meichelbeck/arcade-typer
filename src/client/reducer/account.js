@@ -1,8 +1,4 @@
-// @flow
-
-import {
-  SAVE_ACCOUNT,
-} from 'shared/action/accounts'
+import { SAVE_ACCOUNT } from 'shared/action/accounts'
 
 const initialState = null
 
