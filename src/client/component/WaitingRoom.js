@@ -5,7 +5,7 @@ import { gameRoute } from 'shared/routes'
 
 export default recompact.compose(
   recompact.branch(
-    ({ game }) => isProd && game.players.length < 2,
+    ({ game }) => true || (isProd && game.players.length < 2),
     () => ({ game }) => (
       <div>
         <h2>Waiting for another player</h2>

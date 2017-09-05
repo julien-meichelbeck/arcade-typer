@@ -1,4 +1,5 @@
 import Rx from 'rxjs/Rx'
+import account from 'client/account'
 import { gameState$ } from 'client/socket'
 import { sendPlayerState } from 'client/socketApi'
 import isEqual from 'lodash/isEqual'
@@ -6,10 +7,13 @@ import isEqual from 'lodash/isEqual'
 export default ({ props$ }) => {
   const gameId$ = props$.pluck('gameId').distinctUntilChanged()
   const words$ = gameState$.pluck('text').map(({ content }) => content.split(' '))
-  const playersAreReady$ = gameState$
-    .map(({ players }) => players.filter(({ status }) => status !== 'waiting').length > 1)
+  const currentPlayer$ = gameState$
+    .map(({ players }) => players.find(player => ({ ...(player.id === account.id), ...account })))
     .distinctUntilChanged()
-    .debug('playersAreReady$')
+
+  const playersAreReady$ = gameState$
+    .map(({ players }) => players.filter(({ status }) => status !== 'waiting').length >= 1)
+    .distinctUntilChanged()
 
   const input$ = new Rx.Subject()
   const currentIndex$ = input$
@@ -21,12 +25,17 @@ export default ({ props$ }) => {
       return index
     }, 0)
     .startWith(0)
+    .merge(currentPlayer$.pluck('progress'))
     .distinctUntilChanged()
 
   const inputValue$ = currentIndex$.distinctUntilChanged().switchMap(() => input$.startWith(''))
   const expectedWord$ = currentIndex$.withLatestFrom(words$, (index, words) => words[index])
   const firstCharacterTimestamp$ = input$.map(() => Date.now()).take(1)
-  const hasFinished$ = currentIndex$.withLatestFrom(words$).filter(([index, words]) => index >= words.length)
+  const hasFinished$ = currentIndex$
+    .withLatestFrom(words$)
+    .filter(([index, words]) => index >= words.length)
+    .mapTo(true)
+
   const isCorrectWord$ = inputValue$.withLatestFrom(
     expectedWord$,
     (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue,
@@ -48,16 +57,13 @@ export default ({ props$ }) => {
       },
     )
 
-  const countdown$ = playersAreReady$
-    .mapTo(true)
-    .filter(Boolean)
-    .switchMap(() =>
-      Rx.Observable
-        .timer(0, 1000)
-        .timeInterval()
-        .map(({ value }) => 3 - value)
-        .filter(value => value >= 0),
-    )
+  const countdown$ = playersAreReady$.filter(Boolean).switchMap(() =>
+    Rx.Observable
+      .timer(0, 1000)
+      .timeInterval()
+      .map(({ value }) => 3 - value)
+      .filter(value => value >= 0),
+  )
 
   Rx.Observable
     .timer(0, 1000)
@@ -80,5 +86,7 @@ export default ({ props$ }) => {
     hasFinished$,
     gameState$,
     words$,
+    currentPlayer$,
+    gameId$,
   }
 }

@@ -71,6 +71,7 @@ export default class Game {
     const unusedColors = COLORS.filter(color => !this.players.map(({ color }) => color).includes(color))
     this.players = this.players.concat({
       ...player,
+      status: 'waiting',
       progress: 0,
       color: sample(unusedColors) || sample(COLORS),
     })
@@ -82,7 +83,9 @@ export default class Game {
       const lastPlayer = maxBy(this.players, player => player.position)
       currentPlayer.position = lastPlayer ? lastPlayer.position + 1 : 1
     }
-    this.players = this.players.map(player => (player.id === player.id ? { ...player, ...currentPlayer } : player))
+    this.players = this.players.map(
+      player => (player.id === currentPlayer.id ? { ...player, ...currentPlayer } : player),
+    )
     this.save()
   }
 

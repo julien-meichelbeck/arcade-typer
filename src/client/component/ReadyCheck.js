@@ -1,7 +1,6 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
-import { connect } from 'react-redux'
-import { sendPlayer } from 'shared/actions/games'
+import { sendPlayerState } from 'client/socketApi'
 import Text from 'client/component/Text'
 import injectSheet from 'react-jss'
 
@@ -12,31 +11,28 @@ const styles = {
   },
 }
 
-const onPlayerReady = ({ dispatch, gameId, currentPlayer }) => e => {
+const onPlayerReady = ({ gameId, currentPlayer: { id } }) => e => {
   if (e.code === 'Enter') {
-    dispatch(sendPlayer({ gameId, player: { id: currentPlayer.id, status: 'ready' } }))
+    sendPlayerState({ gameId, playerState: { id, status: 'ready' } })
     document.removeEventListener('keydown', onPlayerReady)
   }
 }
 
 export default recompact.compose(
-  connect(() => ({}), dispatch => ({ dispatch })),
-  recompact.withProps(({ currentPlayer }) => ({
-    isPlayerWaiting: currentPlayer && currentPlayer.status === 'waiting',
-  })),
+  recompact.pluckObs(['currentPlayer$', 'gameId$']),
   recompact.withHandlers({ onPlayerReady }),
   recompact.withState('readyCheckListener', 'setReadyCheckListener', true),
   recompact.lifecycle({
     componentWillMount() {
-      const { onPlayerReady, isPlayerWaiting, readyCheckListener, setReadyCheckListener } = this.props
-      if (isPlayerWaiting && readyCheckListener) {
+      const { onPlayerReady, readyCheckListener, setReadyCheckListener } = this.props
+      if (readyCheckListener) {
         document.addEventListener('keydown', onPlayerReady)
         setReadyCheckListener(false)
       }
     },
     componentWillUpdate(newProps) {
-      const { onPlayerReady, isPlayerWaiting, readyCheckListener, setReadyCheckListener } = newProps
-      if (isPlayerWaiting && readyCheckListener) {
+      const { onPlayerReady, readyCheckListener, setReadyCheckListener } = newProps
+      if (readyCheckListener) {
         document.addEventListener('keydown', onPlayerReady)
         setReadyCheckListener(false)
       }
@@ -47,11 +43,8 @@ export default recompact.compose(
     },
   }),
   injectSheet(styles),
-)(
-  ({ isPlayerWaiting, classes }) =>
-    isPlayerWaiting ? (
-      <Text className={classes.root} lead>
-        Press enter to start...
-      </Text>
-    ) : null,
-)
+)(({ classes }) => (
+  <Text className={classes.root} lead>
+    Press enter to start...
+  </Text>
+))

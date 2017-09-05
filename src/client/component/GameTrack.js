@@ -4,7 +4,6 @@ import Player from 'client/component/Player'
 import Container from 'client/component/Container'
 import GameMessage from 'client/component//GameMessage'
 import recompact from 'shared/modules/recompact'
-import { gameState$ } from 'client/socket'
 
 const styles = {
   root: {
@@ -26,7 +25,7 @@ export default recompact.compose(
   injectSheet(styles),
   recompact.pluckObs(['gameState$', 'words$']),
   recompact.branch(({ gameState }) => !gameState, recompact.renderNothing),
-  recompact.pure
+  recompact.pure,
 )(({ classes, words, progress, gameState: { players } }) => (
   <div className={classes.root}>
     <Container>
