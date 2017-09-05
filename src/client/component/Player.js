@@ -12,8 +12,7 @@ const styles = {
     margin: '0 0 7px',
     fontFamily: "'Montserrat', sans-serif",
   },
-  position: {
-  },
+  position: {},
   progress: {
     flex: '1 0 0',
     width: '100%',
@@ -34,26 +33,14 @@ const styles = {
   },
 }
 
-const progression = (progressValue, progressMax) => (
-  `${Math.round((progressValue / progressMax) * 100)}%`
-)
+const progression = (progressValue, progressMax) => `${Math.round(progressValue / progressMax * 100)}%`
 
 export default recompact.compose(
   injectSheet(styles),
-)((({
-  username,
-  progressValue,
-  progressMax,
-  speed = 0,
-  position,
-  classes,
-  color,
-}) => (
+)(({ username, progressValue, progressMax, speed = 0, position, classes, color }) => (
   <div className={classes.root} style={{ color }}>
     <p className={classes.username}>
-      <span className={classes.position}>
-        { position > 0 ? `${position}. ` : null }
-      </span>
+      <span className={classes.position}>{position > 0 ? `${position}. ` : null}</span>
       {username}
     </p>
     <div style={{ display: 'flex' }}>
@@ -69,4 +56,4 @@ export default recompact.compose(
       <div className={classes.speedMeter}>{speed} WPM</div>
     </div>
   </div>
-)))
+))

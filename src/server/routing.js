@@ -4,14 +4,9 @@ import renderApp from 'server/renderApp'
 import gamesController from 'server/controllers/gamesController'
 import sessionsController from 'server/controllers/sessionsController'
 import { setCurrentUser } from 'server/passport'
-import {
-  gameRoute,
-  PLAY_ROUTE,
-  LOGIN_ROUTE,
-  LOGOUT_ROUTE,
-} from 'shared/routes'
+import { gameRoute, PLAY_ROUTE, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
 
-export default (app) => {
+export default app => {
   // Sessions
   app.post(LOGIN_ROUTE, passport.authenticate('local'), sessionsController.login)
   app.get(LOGOUT_ROUTE, sessionsController.logout)

@@ -6,14 +6,11 @@ import { gameRoute } from 'shared/routes'
 export default recompact.compose(
   recompact.branch(
     ({ game }) => isProd && game.players.length < 2,
-    () => ({ game }) =>
+    () => ({ game }) => (
       <div>
         <h2>Waiting for another player</h2>
-        <input
-          readOnly
-          value={absoluteUrl(gameRoute(game.id))}
-          style={{ width: '100%', fontSize: '20px' }}
-        />
-      </div>,
+        <input readOnly value={absoluteUrl(gameRoute(game.id))} style={{ width: '100%', fontSize: '20px' }} />
+      </div>
+    ),
   ),
 )

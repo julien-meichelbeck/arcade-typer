@@ -19,18 +19,16 @@ const styles = {
   },
 }
 
-
-export default injectSheet(styles)(({
-  children,
-  classes,
-  sheet,
-  className: classNameProp,
-  ...props
-}) => {
-  const className = classNames({
-    [classes.root]: true,
-  }, classNameProp)
+export default injectSheet(styles)(({ children, classes, sheet, className: classNameProp, ...props }) => {
+  const className = classNames(
+    {
+      [classes.root]: true,
+    },
+    classNameProp,
+  )
   return (
-    <input type="text" className={className} {...props}>{children}</input>
+    <input type="text" className={className} {...props}>
+      {children}
+    </input>
   )
 })

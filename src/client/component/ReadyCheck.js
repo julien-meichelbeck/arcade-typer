@@ -12,8 +12,7 @@ const styles = {
   },
 }
 
-
-const onPlayerReady = ({ dispatch, gameId, currentPlayer }) => (e) => {
+const onPlayerReady = ({ dispatch, gameId, currentPlayer }) => e => {
   if (e.code === 'Enter') {
     dispatch(sendPlayer({ gameId, player: { id: currentPlayer.id, status: 'ready' } }))
     document.removeEventListener('keydown', onPlayerReady)
@@ -22,14 +21,14 @@ const onPlayerReady = ({ dispatch, gameId, currentPlayer }) => (e) => {
 
 export default recompact.compose(
   connect(() => ({}), dispatch => ({ dispatch })),
-  recompact.withProps(({ currentPlayer }) => ({ isPlayerWaiting: currentPlayer && currentPlayer.status === 'waiting' })),
+  recompact.withProps(({ currentPlayer }) => ({
+    isPlayerWaiting: currentPlayer && currentPlayer.status === 'waiting',
+  })),
   recompact.withHandlers({ onPlayerReady }),
   recompact.withState('readyCheckListener', 'setReadyCheckListener', true),
   recompact.lifecycle({
     componentWillMount() {
-      const {
-        onPlayerReady, isPlayerWaiting, readyCheckListener, setReadyCheckListener,
-      } = this.props
+      const { onPlayerReady, isPlayerWaiting, readyCheckListener, setReadyCheckListener } = this.props
       if (isPlayerWaiting && readyCheckListener) {
         document.addEventListener('keydown', onPlayerReady)
         setReadyCheckListener(false)
@@ -48,11 +47,11 @@ export default recompact.compose(
     },
   }),
   injectSheet(styles),
-)(({
-  isPlayerWaiting,
-  classes,
-}) => (
-  isPlayerWaiting
-    ? <Text className={classes.root} lead>Press enter to start...</Text>
-    : null
-))
+)(
+  ({ isPlayerWaiting, classes }) =>
+    isPlayerWaiting ? (
+      <Text className={classes.root} lead>
+        Press enter to start...
+      </Text>
+    ) : null,
+)

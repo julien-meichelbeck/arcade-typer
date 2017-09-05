@@ -27,9 +27,17 @@ export default recompact.compose(
     <Container style={{ display: 'flex' }}>
       <h1 className={classes.siteTitle}>Arcade typer</h1>
       <div style={{ flex: '1 0 0' }} />
-      <Button to={HOME_ROUTE} spaced primary>Home</Button>
-      <Button onClick={() => dispatch(createGame(history))} spaced>New game</Button>
-      {account ? <Button to={LOGOUT_ROUTE} spaced>Logout</Button> : null}
+      <Button to={HOME_ROUTE} spaced primary>
+        Home
+      </Button>
+      <Button onClick={() => dispatch(createGame(history))} spaced>
+        New game
+      </Button>
+      {account ? (
+        <Button to={LOGOUT_ROUTE} spaced>
+          Logout
+        </Button>
+      ) : null}
     </Container>
   </nav>
 ))

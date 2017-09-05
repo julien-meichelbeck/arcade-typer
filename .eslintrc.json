@@ -1,6 +1,8 @@
 {
   "extends": [
     "airbnb",
+    "prettier",
+    "prettier/react"
   ],
   "plugins": [
     "compat"
@@ -18,10 +20,12 @@
     "semi": [2, "never"],
     "no-unexpected-multiline": 2,
     "compat/compat": 2,
+    "no-param-reassign": "off",
     "react/prop-types": "off",
     "no-nested-ternary": "off",
     "no-shadow": "off",
-    "import/no-named-as-default-member": "off"
+    "import/no-named-as-default-member": "off",
+    "react/jsx-filename-extension": "off"
   },
   "env": {
     "browser": true,

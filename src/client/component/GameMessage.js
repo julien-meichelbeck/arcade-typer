@@ -17,13 +17,4 @@ const styles = {
 export default recompact.compose(
   injectSheet(styles),
   connect(({ global: { message } }) => ({ message })),
-)(({
-  message,
-  classes,
-}) => (
-  <div className={classes.root}>
-    {
-      message ? message.text : null
-    }
-  </div>
-))
+)(({ message, classes }) => <div className={classes.root}>{message ? message.text : null}</div>)

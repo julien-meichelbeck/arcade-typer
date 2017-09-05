@@ -9,13 +9,8 @@ const styles = {
   },
 }
 
-export default injectSheet(styles)(({
-  classes,
-  children,
-  sheet,
-  ...props
-}) =>
+export default injectSheet(styles)(({ classes, children, sheet, ...props }) => (
   <div className={classes.root} {...props}>
-    { children }
-  </div>,
-)
+    {children}
+  </div>
+))
