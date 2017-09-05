@@ -41,7 +41,7 @@ const pluckObs = obs =>
       const propName = elem.slice(0, elem.length - 1)
       acc[propName] = observables[elem]
       return acc
-    }, {})
+    }, {}),
   )
 
 Rx.Observable.prototype.debug = function debug(name, selector = x => x) {
@@ -52,6 +52,7 @@ Rx.Observable.prototype.debug = function debug(name, selector = x => x) {
     }
   })
 }
+
 export default {
   branch,
   componentFromProp,

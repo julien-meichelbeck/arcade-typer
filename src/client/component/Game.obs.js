@@ -1,6 +1,6 @@
 import Rx from 'rxjs/Rx'
-import { socket, gameState$ } from 'client/socket'
-import player from 'client/account'
+import { gameState$ } from 'client/socket'
+import { sendPlayerState } from 'client/socketApi'
 
 export default ({ props$ }) => {
   const gameId$ = props$.pluck('gameId')
@@ -55,16 +55,7 @@ export default ({ props$ }) => {
     .withLatestFrom(currentIndex$, speed$, (interval, progress, speed) => ({ progress, speed }))
     .withLatestFrom(gameId$)
     .subscribe(([playerState, gameId]) => {
-      socket.emit('action', {
-        type: 'SEND_PLAYER_STATE',
-        payload: {
-          player: {
-            ...player,
-            ...playerState,
-          },
-          gameId,
-        },
-      })
+      sendPlayerState({ playerState, gameId })
     })
 
   return {
