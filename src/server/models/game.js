@@ -1,6 +1,7 @@
 import * as redis from 'server/redis'
 import nameGenerator from 'server/services/nameGenerator'
 import { isProd, sample } from 'shared/utils'
+import maxBy from 'lodash/maxBy'
 
 const toRedisKey = id => `games::${id}`
 const TTL = 7200 // 2 Hours
@@ -71,16 +72,17 @@ export default class Game {
     this.players = this.players.concat({
       ...player,
       progress: 0,
-      status: 'waiting',
       color: sample(unusedColors) || sample(COLORS),
     })
     this.save()
   }
 
-  updatePlayer(player) {
-    this.players = this.players.map(
-      currentPlayer => (currentPlayer.id === player.id ? { ...currentPlayer, ...player } : currentPlayer),
-    )
+  updatePlayer(currentPlayer) {
+    if (!currentPlayer.position && currentPlayer.progress >= this.text.content.split(' ').length) {
+      const lastPlayer = maxBy(this.players, player => player.position)
+      currentPlayer.position = lastPlayer ? lastPlayer.position + 1 : 1
+    }
+    this.players = this.players.map(player => (player.id === player.id ? { ...player, ...currentPlayer } : player))
     this.save()
   }
 

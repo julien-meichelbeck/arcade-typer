@@ -3,7 +3,7 @@ import recompact from 'shared/modules/recompact'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
 import GameInput from 'client/component/GameInput'
-import { joinGame } from 'client/socketApi'
+import { joinGame, leaveGame } from 'client/socketApi'
 import { gameState$ } from 'client/socket'
 import provideObs from './Game.obs'
 
@@ -12,6 +12,9 @@ export default recompact.compose(
   recompact.lifecycle({
     componentWillMount() {
       joinGame(this.props.gameId)
+    },
+    componentWillUnmount() {
+      leaveGame(this.props.gameId)
     },
   }),
   // recompact.connectObs(({ reload$ }) => ({

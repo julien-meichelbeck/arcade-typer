@@ -1,10 +1,15 @@
 import Rx from 'rxjs/Rx'
 import { gameState$ } from 'client/socket'
 import { sendPlayerState } from 'client/socketApi'
+import isEqual from 'lodash/isEqual'
 
 export default ({ props$ }) => {
-  const gameId$ = props$.pluck('gameId')
+  const gameId$ = props$.pluck('gameId').distinctUntilChanged()
   const words$ = gameState$.pluck('text').map(({ content }) => content.split(' '))
+  const playersAreReady$ = gameState$
+    .map(({ players }) => players.filter(({ status }) => status !== 'waiting').length > 1)
+    .distinctUntilChanged()
+    .debug('playersAreReady$')
 
   const input$ = new Rx.Subject()
   const currentIndex$ = input$
@@ -43,17 +48,23 @@ export default ({ props$ }) => {
       },
     )
 
-  const countdown$ = Rx.Observable
-    .timer(0, 1000)
-    .timeInterval()
-    .map(({ value }) => 3 - value)
-    .filter(value => value >= 0)
+  const countdown$ = playersAreReady$
+    .mapTo(true)
+    .filter(Boolean)
+    .switchMap(() =>
+      Rx.Observable
+        .timer(0, 1000)
+        .timeInterval()
+        .map(({ value }) => 3 - value)
+        .filter(value => value >= 0),
+    )
 
   Rx.Observable
     .timer(0, 1000)
     .timeInterval()
     .withLatestFrom(currentIndex$, speed$, (interval, progress, speed) => ({ progress, speed }))
     .withLatestFrom(gameId$)
+    .distinctUntilChanged(isEqual)
     .subscribe(([playerState, gameId]) => {
       sendPlayerState({ playerState, gameId })
     })
