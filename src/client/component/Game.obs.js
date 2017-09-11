@@ -8,11 +8,10 @@ export default ({ props$ }) => {
   const gameId$ = props$.pluck('gameId').distinctUntilChanged()
   const words$ = gameState$.pluck('text').map(({ content }) => content.split(' '))
   const currentPlayer$ = gameState$
-    .map(({ players }) => players.find(player => ({ ...(player.id === account.id), ...account })))
-    .distinctUntilChanged()
-
-  const playersAreReady$ = gameState$
-    .map(({ players }) => players.filter(({ status }) => status !== 'waiting').length >= 1)
+    .map(({ players }) => {
+      const player = players.find(player => player.id === account.id)
+      return { ...player, ...account }
+    })
     .distinctUntilChanged()
 
   const input$ = new Rx.Subject()
@@ -25,7 +24,6 @@ export default ({ props$ }) => {
       return index
     }, 0)
     .startWith(0)
-    .merge(currentPlayer$.pluck('progress'))
     .distinctUntilChanged()
 
   const inputValue$ = currentIndex$.distinctUntilChanged().switchMap(() => input$.startWith(''))
@@ -57,14 +55,6 @@ export default ({ props$ }) => {
       },
     )
 
-  const countdown$ = playersAreReady$.filter(Boolean).switchMap(() =>
-    Rx.Observable
-      .timer(0, 1000)
-      .timeInterval()
-      .map(({ value }) => 3 - value)
-      .filter(value => value >= 0),
-  )
-
   Rx.Observable
     .timer(0, 1000)
     .timeInterval()
@@ -82,7 +72,6 @@ export default ({ props$ }) => {
     expectedWord$,
     currentIndex$,
     isCorrectWord$,
-    countdown$,
     hasFinished$,
     gameState$,
     words$,

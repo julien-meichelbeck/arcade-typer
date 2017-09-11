@@ -7,8 +7,7 @@ const renderApp = (req, additionalState = {}) => {
     ...additionalState,
   })
 
-  return (
-    `<!doctype html>
+  return `<!doctype html>
       <html>
         <head>
           <title>Arcade typer</title>
@@ -23,8 +22,6 @@ const renderApp = (req, additionalState = {}) => {
           <script src="${isProd ? STATIC_PATH : `http://localhost:${WDS_PORT}/dist`}/js/bundle.js"></script>
         </body>
       </html>`
-  )
 }
-
 
 export default renderApp

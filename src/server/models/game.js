@@ -1,9 +1,10 @@
 import * as redis from 'server/redis'
 import nameGenerator from 'server/services/nameGenerator'
-import { isProd, sample } from 'shared/utils'
-import maxBy from 'lodash/maxBy'
+import { WAITING_ROOM, COUNTDOWN, NEXT_GAME_COUNTDOWN } from 'shared/statuses'
+import { isProd, sample, now } from 'shared/utils'
+import { GET_GAME_STATE } from 'shared/actions/games'
+import handleGameChange from './handleGameChange'
 
-const toRedisKey = id => `games::${id}`
 const TTL = 7200 // 2 Hours
 const COLORS = [
   'rgb(170, 111, 252)',
@@ -34,100 +35,154 @@ const TEXTS = isProd
     ]
   : [{ content: 'Foo is bar', author: 'Lorem Ipsum' }]
 
+const toRedisKey = gameId => `games:${gameId}`
+
+const handlePlayerState = (player, state) => {
+  const isDone = player.progress >= state.text.content.split(' ').length
+  return isDone ? { ...player, status: 'done', doneAt: now() } : player
+}
+
 export default class Game {
-  static find(id, onFind) {
-    redis.connect().get(toRedisKey(id), (err, game) => {
-      if (!err && game) {
-        onFind(new Game(JSON.parse(game)))
-      } else if (!game) {
-        console.error(`Could not find game ${toRedisKey(id)}`)
-      } else {
-        console.error(err)
-      }
+  static async find(gameId, io) {
+    return new Promise((resolve, reject) => {
+      redis.connect().get(toRedisKey(gameId), (error, game) => {
+        if (game && !error) resolve(new Game(JSON.parse(game), io))
+        else if (!game) reject(`Could not find game ${toRedisKey(gameId)}`)
+        else reject(error)
+      })
     })
   }
 
   static create() {
     const game = new Game({
-      id: nameGenerator(),
+      gameId: nameGenerator(),
       text: sample(TEXTS),
       players: [],
-      createdAt: Math.floor(Date.now()),
+      createdAt: now(),
+      status: WAITING_ROOM,
+      countdown: null,
+      nextGameCountdown: null,
     })
     game.save()
     return game
   }
 
-  constructor(attributes) {
-    Object.entries(attributes).forEach(([name, value]) => {
-      this[name] = value
-    })
+  static startCountdown(gameId, io) {
+    const intervalId = setInterval(() => {
+      Game.find(gameId, io).then(game => {
+        const countdown = (game.state.countdown || 4) - 1
+        game.setState({ countdown })
+        if (countdown === 0) clearInterval(intervalId)
+      })
+    }, 1000)
+  }
+
+  static startNextGameCountdown(gameId, io) {
+    const intervalId = setInterval(() => {
+      Game.find(gameId, io).then(game => {
+        if (game.status !== NEXT_GAME_COUNTDOWN) return
+        const nextGameCountdown = (game.state.nextGameCountdown || 20) - 1
+        if (nextGameCountdown !== 0) {
+          game.setState({ nextGameCountdown })
+        } else {
+          clearInterval(intervalId)
+          game.reset()
+        }
+      })
+    }, 1000)
+
+    setTimeout(() => {
+      Game.find(gameId, io).then(game => game.reset())
+    }, 3000)
+  }
+
+  constructor(attributes, io) {
+    const { gameId, ...state } = attributes
+    this.gameId = gameId
+    this.state = state
+    this.io = io
+    if (io) {
+      this.onChange = () => io.to(this.gameId).emit(GET_GAME_STATE, this.toClientData())
+    }
+  }
+
+  setState(newState) {
+    const previousStatus = this.state.status
+    this.state = handleGameChange({ ...this.state, ...newState })
+    this.onChange(this.state)
+    this.save()
+    if (previousStatus !== this.state.status) {
+      switch (this.state.status) {
+        case COUNTDOWN:
+          Game.startCountdown(this.gameId, this.io)
+          break
+        case NEXT_GAME_COUNTDOWN:
+          Game.startNextGameCountdown(this.gameId, this.io)
+          break
+        default:
+          break
+      }
+    }
   }
 
   addPlayer(player) {
-    if (this.players.find(({ id }) => id === player.id)) {
+    const { players } = this.state
+    if (players.find(({ id }) => id === player.id)) {
+      this.onChange(this.state)
       return
     }
-    const unusedColors = COLORS.filter(color => !this.players.map(({ color }) => color).includes(color))
-    this.players = this.players.concat({
-      ...player,
-      status: 'waiting',
-      progress: 0,
-      color: sample(unusedColors) || sample(COLORS),
-    })
-    this.save()
+
+    const colors = COLORS.filter(color => !players.map(({ color }) => color).includes(color))
+    const newPlayer = { ...player, progress: 0, color: sample(colors) || sample(COLORS) }
+    this.setState({ players: [...players, newPlayer] })
   }
 
-  updatePlayer(currentPlayer) {
-    if (!currentPlayer.position && currentPlayer.progress >= this.text.content.split(' ').length) {
-      const lastPlayer = maxBy(this.players, player => player.position)
-      currentPlayer.position = lastPlayer ? lastPlayer.position + 1 : 1
-    }
-    this.players = this.players.map(
-      player => (player.id === currentPlayer.id ? { ...player, ...currentPlayer } : player),
-    )
-    this.save()
+  updatePlayer(playerState) {
+    const { players } = this.state
+    this.setState({
+      players: players.map(
+        player =>
+          player.id === playerState.id
+            ? handlePlayerState({ ...player, ...playerState }, this.state, this.gameId, this.io)
+            : player,
+      ),
+    })
   }
 
   removePlayer(player) {
-    this.players = this.players.filter(p => p.id !== player.id)
-    this.save()
+    const { players } = this.state
+    this.setState({ players: players.filter(p => p.id !== player.id) })
   }
 
-  start() {
-    this.save()
-  }
-
-  isDone() {
-    return this.players.every(({ status }) => status === 'done')
+  reset() {
+    const players = this.state.players.map(player => ({
+      ...player,
+      speed: 0,
+      status: null,
+      progress: null,
+      doneAt: null,
+    }))
+    this.setState({
+      text: sample(TEXTS),
+      status: WAITING_ROOM,
+      countdown: null,
+      nextGameCountdown: null,
+      players,
+    })
   }
 
   save() {
-    redis.connect().set(toRedisKey(this.id), this.toJson(), 'EX', TTL)
+    redis.connect().set(toRedisKey(this.gameId), this.toJson(), 'EX', TTL)
   }
 
   toJson() {
-    return JSON.stringify({
-      id: this.id,
-      text: this.text,
-      players: this.players,
-    })
-  }
-
-  nextGame() {
-    return new Game({
-      id: this.id,
-      createdAt: this.createdAt,
-      text: sample(TEXTS),
-      players: [],
-    })
+    return JSON.stringify(this.toClientData())
   }
 
   toClientData() {
     return {
-      id: this.id,
-      text: this.text,
-      players: this.players,
+      gameId: this.gameId,
+      ...this.state,
     }
   }
 }

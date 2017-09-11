@@ -31,6 +31,7 @@
     "express": "^4.15.2",
     "express-session": "^1.15.2",
     "isomorphic-fetch": "^2.2.1",
+    "javascript-state-machine": "^3.0.1",
     "lodash": "^4.17.4",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",

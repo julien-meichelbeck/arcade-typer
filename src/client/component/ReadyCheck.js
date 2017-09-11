@@ -11,9 +11,9 @@ const styles = {
   },
 }
 
-const onPlayerReady = ({ gameId, currentPlayer: { id } }) => e => {
+const onPlayerReady = ({ gameId }) => e => {
   if (e.code === 'Enter') {
-    sendPlayerState({ gameId, playerState: { id, status: 'ready' } })
+    sendPlayerState({ gameId, playerState: { status: 'ready' } })
     document.removeEventListener('keydown', onPlayerReady)
   }
 }
@@ -43,8 +43,8 @@ export default recompact.compose(
     },
   }),
   injectSheet(styles),
-)(({ classes }) => (
+)(({ classes, currentPlayer: { status } }) => (
   <Text className={classes.root} lead>
-    Press enter to start...
+    {status !== 'ready' ? 'Press enter to start...' : null}
   </Text>
 ))

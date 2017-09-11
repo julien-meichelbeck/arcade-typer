@@ -1,6 +1,7 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
 import injectSheet from 'react-jss'
+import { READY_CHECK } from 'shared/statuses'
 
 const styles = {
   root: {
@@ -37,11 +38,12 @@ const progression = (progressValue, progressMax) => `${Math.round(progressValue 
 
 export default recompact.compose(
   injectSheet(styles),
-)(({ username, progressValue, progressMax, speed = 0, position, classes, color }) => (
+)(({ username, status, gameStatus, progressValue, progressMax, speed = 0, position, classes, color }) => (
   <div className={classes.root} style={{ color }}>
     <p className={classes.username}>
       <span className={classes.position}>{position > 0 ? `${position}. ` : null}</span>
       {username}
+      {gameStatus === READY_CHECK && status === 'ready' ? ' ✅' : null}
     </p>
     <div style={{ display: 'flex' }}>
       <div className={classes.progress}>

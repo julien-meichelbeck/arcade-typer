@@ -13,7 +13,7 @@ const App = () => (
     <Nav />
     <Container>
       <Switch>
-        <Route path={gameRoute()} render={props => <GamePage gameId={props.match.params.id} />} />
+        <Route path={gameRoute()} render={props => <GamePage gameId={props.match.params.gameId} />} />
         <Route exact path={HOME_ROUTE} render={() => <HomePage />} />
         <Route component={NotFoundPage} />
       </Switch>

@@ -9,9 +9,11 @@ export const socket = socketIOClient(window.location.host)
 export const gameState$ = Rx.Observable
   .create(observer => {
     socket.on(GET_GAME_STATE, newGameState => {
-      observer.next(newGameState)
+      if (!isEqual(window.gameState, newGameState)) {
+        observer.next(newGameState)
+        console.log(newGameState)
+      }
     })
   })
-  .distinctUntilChanged(isEqual)
   .publishReplay(1)
   .refCount()

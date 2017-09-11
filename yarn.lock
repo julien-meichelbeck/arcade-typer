@@ -3061,6 +3061,10 @@ istanbul-reports@^1.1.1:
   dependencies:
     handlebars "^4.0.3"
 
+javascript-state-machine@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/javascript-state-machine/-/javascript-state-machine-3.0.1.tgz#327320336a20364e26b51d91662c14f14d41ea52"
+
 jest-changed-files@^19.0.2:
   version "19.0.2"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-19.0.2.tgz#16c54c84c3270be408e06d2e8af3f3e37a885824"
