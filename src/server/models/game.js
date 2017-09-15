@@ -124,6 +124,7 @@ export default class Game {
   removePlayer(player) {
     const { players } = this.state
     this.setState({ players: players.filter(p => p.id !== player.id) })
+    if (players.length === 0) this.destroy()
   }
 
   reset() {
@@ -145,6 +146,10 @@ export default class Game {
 
   save() {
     redis.connect().set(toRedisKey(this.gameId), this.toJson(), 'EX', TTL)
+  }
+
+  destroy() {
+    redis.connect().del(toRedisKey(this.gameId))
   }
 
   toJson() {

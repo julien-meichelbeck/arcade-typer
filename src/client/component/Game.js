@@ -1,13 +1,13 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
+import { joinGame, leaveGame } from 'client/socketApi'
+import { gameState$ } from 'client/socket'
+import { WAITING_ROOM, READY_CHECK } from 'shared/statuses'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
 import WaitingRoom from 'client/component/WaitingRoom'
 import GameInput from 'client/component/GameInput'
-import { joinGame, leaveGame } from 'client/socketApi'
-import { gameState$ } from 'client/socket'
 import ReadyCheck from 'client/component/ReadyCheck'
-import { WAITING_ROOM, READY_CHECK } from 'shared/statuses'
 import provideObs from './Game.obs'
 
 export default recompact.compose(
@@ -19,10 +19,13 @@ export default recompact.compose(
     componentWillUnmount() {
       leaveGame(this.props.gameId)
     },
+    componentWillReceiveProps({ gameId }) {
+      if (gameId !== this.props.gameId) {
+        leaveGame(this.props.gameId)
+        joinGame(gameId)
+      }
+    },
   }),
-  // recompact.connectObs(({ reload$ }) => ({
-  //   key: reload$.scan(reloadCount => reloadCount + 1, 0),
-  // })),
   recompact.connectObs(() => ({ gameState: gameState$ })),
   recompact.branch(({ gameState }) => !gameState, recompact.renderNothing),
   recompact.withObs(provideObs),

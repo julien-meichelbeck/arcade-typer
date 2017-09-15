@@ -31,8 +31,10 @@ test('addPlayer', () => {
 })
 
 test('removePlayer', () => {
+  const spy = jest.spyOn(game, 'destroy')
   game.removePlayer({ id: 1, username: 'Bruce Wayne' })
   expect(game.state.players).toEqual([])
+  // expect(spy).toHaveBeenCalled() ?
 })
 
 test('updatePlayer', () => {
