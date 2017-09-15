@@ -81,7 +81,7 @@ export default class Game {
   setState(newState) {
     const previousStatus = this.state.status
     this.state = handleGameChange({ ...this.state, ...newState })
-    this.onChange(this.state)
+    if (this.onChange) this.onChange(this.state)
     this.save()
     if (previousStatus !== this.state.status) {
       switch (this.state.status) {

@@ -11,8 +11,7 @@
     "prod:start": "heroku local",
     "heroku-postbuild": "yarn prod:build",
     "lint": "eslint src webpack.config.babel.js --ext .js,.jsx",
-    "test": "jest --coverage",
-    "watch": "jest --coverage --watch",
+    "test": "jest --coverage --watch",
     "prepush": "yarn prod:build"
   },
   "dependencies": {
