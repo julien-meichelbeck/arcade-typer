@@ -3,6 +3,7 @@ import nameGenerator from 'server/services/nameGenerator'
 import { WAITING_ROOM, COUNTDOWN, NEXT_GAME_COUNTDOWN } from 'shared/statuses'
 import { isProd, sample, now } from 'shared/utils'
 import { GET_GAME_STATE } from 'shared/actions/games'
+import { startCountdown, startNextGameCountdown } from './asyncActions'
 import handleGameChange from './handleGameChange'
 
 const TTL = 7200 // 2 Hours
@@ -67,35 +68,6 @@ export default class Game {
     return game
   }
 
-  static startCountdown(gameId, io) {
-    const intervalId = setInterval(() => {
-      Game.find(gameId, io).then(game => {
-        const countdown = (game.state.countdown || 4) - 1
-        game.setState({ countdown })
-        if (countdown === 0) clearInterval(intervalId)
-      })
-    }, 1000)
-  }
-
-  static startNextGameCountdown(gameId, io) {
-    const intervalId = setInterval(() => {
-      Game.find(gameId, io).then(game => {
-        if (game.status !== NEXT_GAME_COUNTDOWN) return
-        const nextGameCountdown = (game.state.nextGameCountdown || 20) - 1
-        if (nextGameCountdown !== 0) {
-          game.setState({ nextGameCountdown })
-        } else {
-          clearInterval(intervalId)
-          game.reset()
-        }
-      })
-    }, 1000)
-
-    setTimeout(() => {
-      Game.find(gameId, io).then(game => game.reset())
-    }, 3000)
-  }
-
   constructor(attributes, io) {
     const { gameId, ...state } = attributes
     this.gameId = gameId
@@ -114,10 +86,10 @@ export default class Game {
     if (previousStatus !== this.state.status) {
       switch (this.state.status) {
         case COUNTDOWN:
-          Game.startCountdown(this.gameId, this.io)
+          startCountdown(this.gameId, this.io)
           break
         case NEXT_GAME_COUNTDOWN:
-          Game.startNextGameCountdown(this.gameId, this.io)
+          startNextGameCountdown(this.gameId, this.io)
           break
         default:
           break
