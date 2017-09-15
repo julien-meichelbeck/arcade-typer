@@ -1,6 +1,7 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
 import injectSheet from 'react-jss'
+import { READY_CHECK } from 'shared/statuses'
 
 const styles = {
   root: {
@@ -12,8 +13,7 @@ const styles = {
     margin: '0 0 7px',
     fontFamily: "'Montserrat', sans-serif",
   },
-  position: {
-  },
+  position: {},
   progress: {
     flex: '1 0 0',
     width: '100%',
@@ -34,27 +34,16 @@ const styles = {
   },
 }
 
-const progression = (progressValue, progressMax) => (
-  `${Math.round((progressValue / progressMax) * 100)}%`
-)
+const progression = (progressValue, progressMax) => `${Math.round(progressValue / progressMax * 100)}%`
 
 export default recompact.compose(
   injectSheet(styles),
-)((({
-  username,
-  progressValue,
-  progressMax,
-  speed = 0,
-  position,
-  classes,
-  color,
-}) => (
+)(({ username, status, gameStatus, progressValue, progressMax, speed = 0, position, classes, color }) => (
   <div className={classes.root} style={{ color }}>
     <p className={classes.username}>
-      <span className={classes.position}>
-        { position > 0 ? `${position}. ` : null }
-      </span>
+      <span className={classes.position}>{position > 0 ? `${position}. ` : null}</span>
       {username}
+      {gameStatus === READY_CHECK && status === 'ready' ? ' ✅' : null}
     </p>
     <div style={{ display: 'flex' }}>
       <div className={classes.progress}>
@@ -69,4 +58,4 @@ export default recompact.compose(
       <div className={classes.speedMeter}>{speed} WPM</div>
     </div>
   </div>
-)))
+))

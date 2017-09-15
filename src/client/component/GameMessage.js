@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import injectSheet from 'react-jss'
 import recompact from 'shared/modules/recompact'
 
@@ -16,14 +15,8 @@ const styles = {
 
 export default recompact.compose(
   injectSheet(styles),
-  connect(({ global: { message } }) => ({ message })),
-)(({
-  message,
-  classes,
-}) => (
-  <div className={classes.root}>
-    {
-      message ? message.text : null
-    }
-  </div>
+  recompact.connectObs(({ gameState$ }) => ({ nextGameCountdown: gameState$.pluck('nextGameCountdown') })),
+  recompact.pure,
+)(({ nextGameCountdown, classes }) => (
+  <div className={classes.root}>{nextGameCountdown ? `${nextGameCountdown}` : null}</div>
 ))

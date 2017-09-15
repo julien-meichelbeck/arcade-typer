@@ -4,7 +4,7 @@ const initialState = {
   players: [],
 }
 
-export default (state: Object = initialState, action: { type: string, payload: any }) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case SET_GAME_STATE:
       return {

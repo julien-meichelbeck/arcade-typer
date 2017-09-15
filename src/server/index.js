@@ -80,6 +80,8 @@ routing(app)
 
 http.listen(WEB_PORT, () => {
   console.log(
-    `Server running on port ${WEB_PORT} ${isProd ? '(production)' : '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`,
+    `Server running on port ${WEB_PORT} ${isProd
+      ? '(production)'
+      : '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`,
   )
 })

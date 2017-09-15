@@ -1,7 +1,4 @@
-
-import {
-  SET_MESSAGE,
-} from 'shared/action/global'
+import { SET_MESSAGE } from 'shared/action/global'
 
 const initialState = {
   message: null,

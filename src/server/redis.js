@@ -6,7 +6,9 @@ let redisClient
 export const connect = () => {
   if (!redisClient) {
     redisClient = redis.createClient({ url: REDIS_URL })
-    redisClient.on('error', (err) => { console.error(`Error ${err}`) })
+    redisClient.on('error', err => {
+      console.error(`Error ${err}`)
+    })
   }
 
   return redisClient
@@ -19,7 +21,7 @@ export async function disconnect() {
       return
     }
 
-    redisClient.quit((error) => {
+    redisClient.quit(error => {
       if (error) {
         reject(error)
       } else {

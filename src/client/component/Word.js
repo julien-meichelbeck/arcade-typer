@@ -19,8 +19,7 @@ export default ({ children, isCurrentWord, isCorrect, isBeingWrittenBy, blurry }
         }}
       >
         {children}
-      </span>
-      {' '}
+      </span>{' '}
     </span>
   )
 }

@@ -6,6 +6,8 @@ import createEagerElement from 'recompact/createEagerElement'
 import createEagerFactory from 'recompact/createEagerFactory'
 import createHelper from 'recompact/createHelper'
 import defaultProps from 'recompact/defaultProps'
+import debug from 'recompact/debug'
+import connectObs from 'recompact/connectObs'
 import flattenProp from 'recompact/flattenProp'
 import getContext from 'recompact/getContext'
 import lifecycle from 'recompact/lifecycle'
@@ -24,15 +26,42 @@ import withContext from 'recompact/withContext'
 import withHandlers from 'recompact/withHandlers'
 import withProps from 'recompact/withProps'
 import withPropsOnChange from 'recompact/withPropsOnChange'
+import setObservableConfig from 'recompact/setObservableConfig'
+import rxjsObservableConfig from 'recompact/rxjsObservableConfig'
+import withObs from 'recompact/withObs'
+import omitProps from 'recompact/omitProps'
 import withState from 'recompact/withState'
+import Rx from 'rxjs/Rx'
+
+setObservableConfig(rxjsObservableConfig)
+
+const pluckObs = obs =>
+  connectObs(observables =>
+    obs.reduce((acc, elem) => {
+      const propName = elem.slice(0, elem.length - 1)
+      acc[propName] = observables[elem]
+      return acc
+    }, {}),
+  )
+
+Rx.Observable.prototype.debug = function debug(name, selector = x => x) {
+  return this.do(value => {
+    // It's not supposed to be used in production, but to be safe.
+    if (process.env.NODE_ENV !== 'production') {
+      console.info(name, selector(value))
+    }
+  })
+}
 
 export default {
   branch,
   componentFromProp,
   compose,
+  connectObs,
   createEagerElement,
   createEagerFactory,
   createHelper,
+  debug,
   defaultProps,
   flattenProp,
   getContext,
@@ -53,4 +82,7 @@ export default {
   withProps,
   withPropsOnChange,
   withState,
+  withObs,
+  pluckObs,
+  omitProps,
 }
