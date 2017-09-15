@@ -5,20 +5,20 @@ import account from 'client/account'
 export const joinGame = gameId => {
   socket.emit('action', {
     type: JOIN_GAME,
-    payload: { player: account, gameId },
+    payload: { player: account(), gameId },
   })
 }
 
 export const leaveGame = gameId => {
   socket.emit('action', {
     type: LEAVE_GAME,
-    payload: { player: account, gameId },
+    payload: { player: account(), gameId },
   })
 }
 
 export const sendPlayerState = ({ playerState, gameId }) => {
   const player = {
-    ...account,
+    ...account(),
     ...playerState,
   }
   socket.emit('action', {

@@ -10,7 +10,7 @@ export default ({ props$ }) => {
   const currentPlayer$ = gameState$
     .map(({ players }) => {
       const player = players.find(player => player.id === account.id)
-      return { ...player, ...account }
+      return { ...player, ...account() }
     })
     .distinctUntilChanged()
 
