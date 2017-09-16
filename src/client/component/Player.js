@@ -38,12 +38,14 @@ const progression = (progressValue, progressMax) => `${Math.round(progressValue 
 
 export default recompact.compose(
   injectSheet(styles),
-)(({ username, status, gameStatus, progressValue, progressMax, speed = 0, position, classes, color }) => (
-  <div className={classes.root} style={{ color }}>
+  recompact.withProps(({ status, gameStatus }) => ({
+    opacity: gameStatus === READY_CHECK && status === 'ready' ? 0.4 : 1,
+  })),
+)(({ username, opacity, progressValue, progressMax, speed = 0, position, classes, color }) => (
+  <div className={classes.root} style={{ color, opacity }}>
     <p className={classes.username}>
       <span className={classes.position}>{position > 0 ? `${position}. ` : null}</span>
       {username}
-      {gameStatus === READY_CHECK && status === 'ready' ? ' ✅' : null}
     </p>
     <div style={{ display: 'flex' }}>
       <div className={classes.progress}>
