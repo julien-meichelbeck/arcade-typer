@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import recompact from 'shared/modules/recompact'
 import { PLAYING, NEXT_GAME_COUNTDOWN } from 'shared/statuses'
 
@@ -23,12 +23,28 @@ export default recompact.compose(
     onChange: ({ onChange }) => event => onChange(event.target.value),
   }),
   recompact.pure,
-)(({ onChange, value, style, readOnly, hasFinished }) => (
-  <input
-    value={value || ''}
-    onChange={onChange}
-    style={style}
-    readOnly={readOnly}
-    placeholder={hasFinished ? null : 'Type the above text here when the game starts'}
-  />
-))
+)(
+  class extends Component {
+    componentDidUpdate({ readOnly }) {
+      if (readOnly && !this.props.readOnly) {
+        this.input.focus()
+      }
+    }
+
+    render() {
+      const { onChange, value, style, readOnly, hasFinished } = this.props
+      return (
+        <input
+          ref={input => {
+            this.input = input
+          }}
+          value={value || ''}
+          onChange={onChange}
+          style={style}
+          readOnly={readOnly}
+          placeholder={hasFinished ? null : 'Type the above text here when the game starts'}
+        />
+      )
+    }
+  },
+)
