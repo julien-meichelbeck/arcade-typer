@@ -1,7 +1,7 @@
 // WEB
 export const HOME_ROUTE = '/'
 export const PLAY_ROUTE = '/play'
-export const NOT_FOUND_DEMO_PAGE_ROUTE = '/404'
+export const NOT_FOUND = '/404'
 export const gameRoute = gameId => `/games/${gameId || ':gameId'}`
 
 // API
