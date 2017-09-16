@@ -9,7 +9,7 @@ export default ({ props$ }) => {
   const words$ = gameState$.pluck('text').map(({ content }) => content.split(' '))
   const currentPlayer$ = gameState$
     .map(({ players }) => {
-      const player = players.find(player => player.id === account.id)
+      const player = players.find(player => player.id === account().id)
       return { ...player, ...account() }
     })
     .distinctUntilChanged()

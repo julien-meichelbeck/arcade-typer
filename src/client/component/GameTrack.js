@@ -31,14 +31,14 @@ export default recompact.compose(
     rankedPlayers: orderBy(players.filter(({ doneAt }) => doneAt), ['doneAt']),
   })),
   recompact.pure,
-)(({ classes, words, progress, gameState: { status, players }, rankedPlayers }) => (
+)(({ classes, words, gameState: { status, players }, rankedPlayers }) => (
   <div className={classes.root}>
     <Container>
       <GameMessage />
       {players.map(player => (
         <Player
           key={player.id}
-          progressValue={progress}
+          progressValue={player.progress || 0}
           progressMax={words.length}
           position={findIndex(rankedPlayers, ({ id }) => id === player.id) + 1}
           gameStatus={status}
