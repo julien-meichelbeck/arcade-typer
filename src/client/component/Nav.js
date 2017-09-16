@@ -4,7 +4,7 @@ import recompact from 'shared/modules/recompact'
 import Button from 'client/component/Button'
 import Container from 'client/component/Container'
 import injectSheet from 'react-jss'
-import { HOME_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
+import { HOME_ROUTE, GAME_START_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
 import { createGame } from 'client/actions/games'
 import { withRouter } from 'react-router'
 
@@ -22,7 +22,7 @@ export default recompact.compose(
   withRouter,
   injectSheet(styles),
   connect(({ account }) => ({ account }), dispatch => ({ dispatch })),
-)(({ classes, account, dispatch, history }) => (
+)(({ classes, account }) => (
   <nav className={classes.root}>
     <Container style={{ display: 'flex' }}>
       <h1 className={classes.siteTitle}>Arcade typer</h1>
@@ -30,7 +30,7 @@ export default recompact.compose(
       <Button to={HOME_ROUTE} spaced primary>
         Home
       </Button>
-      <Button onClick={() => dispatch(createGame(history))} spaced>
+      <Button to={GAME_START_ROUTE} spaced>
         New game
       </Button>
       {account ? (
