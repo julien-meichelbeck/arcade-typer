@@ -4,9 +4,11 @@ import { joinGame, leaveGame, updatePlayer } from 'server/state'
 
 export default io => {
   io.on(IO_CONNECT, socket => {
+    let joinPayload = null
     socket.on('action', ({ type, payload }) => {
       switch (type) {
         case JOIN_GAME:
+          joinPayload = payload
           joinGame(io, socket, payload)
           break
         case LEAVE_GAME:
@@ -19,6 +21,8 @@ export default io => {
       }
     })
 
-    socket.on(IO_DISCONNECT, () => {})
+    socket.on(IO_DISCONNECT, () => {
+      if (joinPayload) leaveGame(io, socket, joinPayload)
+    })
   })
 }
