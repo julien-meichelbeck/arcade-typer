@@ -2,7 +2,7 @@ import { WAITING_ROOM, READY_CHECK, COUNTDOWN, PLAYING, NEXT_GAME_COUNTDOWN } fr
 import { now } from 'shared/utils'
 
 const computeStatus = ({ players, status, countdown }) => {
-  if (players.filter(({ status }) => status === 'done').length === 1) return NEXT_GAME_COUNTDOWN
+  if (players.filter(({ status }) => status === 'done').length >= 1) return NEXT_GAME_COUNTDOWN
   if (status === PLAYING || countdown === 0) return PLAYING
   if (players.filter(({ status }) => status === 'ready').length > 1) return COUNTDOWN
   if (players.length > 1) return READY_CHECK

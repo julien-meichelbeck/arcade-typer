@@ -44,7 +44,7 @@ export default recompact.compose(
 )(({ username, opacity, progressValue, progressMax, speed = 0, position, classes, color }) => (
   <div className={classes.root} style={{ color, opacity }}>
     <p className={classes.username}>
-      <span className={classes.position}>{position > 0 ? `${position}. ` : null}</span>
+      <span className={classes.position}>{position ? `${position === 1 ? '🏆 ' : ''}${position}. ` : null}</span>
       {username}
     </p>
     <div style={{ display: 'flex' }}>

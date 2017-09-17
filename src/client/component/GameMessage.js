@@ -18,5 +18,5 @@ export default recompact.compose(
   recompact.connectObs(({ gameState$ }) => ({ nextGameCountdown: gameState$.pluck('nextGameCountdown') })),
   recompact.pure,
 )(({ nextGameCountdown, classes }) => (
-  <div className={classes.root}>{nextGameCountdown ? `${nextGameCountdown}` : null}</div>
+  <div className={classes.root}>{nextGameCountdown ? `Next game in ${nextGameCountdown} seconds` : null}</div>
 ))

@@ -13,19 +13,18 @@ export const startCountdown = (gameId, io) => {
 
 export const startNextGameCountdown = (gameId, io) => {
   const intervalId = setInterval(() => {
-    Game.find(gameId, io).then(game => {
-      if (game.status !== NEXT_GAME_COUNTDOWN) return
-      const nextGameCountdown = (game.state.nextGameCountdown || 20) - 1
-      if (nextGameCountdown !== 0) {
-        game.setState({ nextGameCountdown })
-      } else {
-        clearInterval(intervalId)
-        game.reset()
-      }
-    })
+    Game.find(gameId, io)
+      .then(game => {
+        const { status, nextGameCountdown } = game.state
+        if (status !== NEXT_GAME_COUNTDOWN) return
+        const nextGameCountdownValue = (nextGameCountdown || 20) - 1
+        if (nextGameCountdownValue !== 0) {
+          game.setState({ nextGameCountdown: nextGameCountdownValue })
+        } else {
+          clearInterval(intervalId)
+          game.reset()
+        }
+      })
+      .catch(() => clearInterval(intervalId))
   }, 1000)
-
-  setTimeout(() => {
-    Game.find(gameId, io).then(game => game.reset())
-  }, 3000)
 }
