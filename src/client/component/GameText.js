@@ -27,6 +27,7 @@ export default recompact.compose(
     words: words$,
     countdown: gameState$.pluck('countdown'),
     status: gameState$.pluck('status'),
+    source: gameState$.pluck('text', 'source'),
   })),
   recompact.branch(({ words }) => !words, recompact.renderNothing),
   recompact.pure,

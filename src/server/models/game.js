@@ -34,7 +34,12 @@ const TEXTS = isProd
         source: 'Watchmen - Alan Moore',
       },
     ]
-  : [{ content: 'Foo is bar', author: 'Lorem Ipsum' }]
+  : [
+      {
+        content: 'The accumulated filth of all their sex and murder will foam up about their waists.',
+        source: 'Watchmen - Alan Moore',
+      },
+    ]
 
 const toRedisKey = gameId => `games:${gameId}`
 
