@@ -36,7 +36,15 @@ const TEXTS = isProd
     ]
   : [
       {
-        content: 'The accumulated filth of all their sex and murder will foam up about their waists.',
+        content: 'Foo is bar',
+        source: 'Watchmen - Alan Moore',
+      },
+      {
+        content: 'Bar is foo',
+        source: 'Watchmen - Alan Moore',
+      },
+      {
+        content: 'Glu is baz',
         source: 'Watchmen - Alan Moore',
       },
     ]
@@ -65,6 +73,7 @@ export default class Game {
       text: sample(TEXTS),
       players: [],
       createdAt: now(),
+      round: 0,
       status: WAITING_ROOM,
       countdown: null,
       nextGameCountdown: null,
@@ -121,7 +130,7 @@ export default class Game {
         player =>
           player.id === playerState.id
             ? handlePlayerState({ ...player, ...playerState }, this.state, this.gameId, this.io)
-            : player,
+            : player
       ),
     })
   }
@@ -143,6 +152,7 @@ export default class Game {
     this.setState({
       text: sample(TEXTS),
       status: WAITING_ROOM,
+      round: this.state.round + 1,
       countdown: null,
       nextGameCountdown: null,
       players,
