@@ -5,6 +5,8 @@ import { sendPlayerState } from 'client/socketApi'
 import { PLAYING } from 'shared/statuses'
 import isEqual from 'lodash/isEqual'
 
+const AVERAGE_CHARS_PER_WORD = 5
+
 export default ({ props$ }) => {
   const gameId$ = props$.pluck('gameId').distinctUntilChanged()
   const round$ = gameState$.pluck('round').distinctUntilChanged()
@@ -46,8 +48,6 @@ export default ({ props$ }) => {
     (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue,
   )
 
-  const AVERAGE_CHARS_PER_WORD = 5
-
   const speed$ = gameState$
     .pluck('status')
     .distinctUntilChanged()
@@ -70,12 +70,9 @@ export default ({ props$ }) => {
     })
 
   speed$
-    .withLatestFrom(currentIndex$, (speed, progress) => ({ progress, speed }))
-    .withLatestFrom(gameId$)
+    .withLatestFrom(currentIndex$, gameId$, (speed, progress, gameId) => ({ playerState: { progress, speed }, gameId }))
     .distinctUntilChanged(isEqual)
-    .subscribe(([playerState, gameId]) => {
-      sendPlayerState({ playerState, gameId })
-    })
+    .subscribe(sendPlayerState)
 
   return {
     inputValue$,
