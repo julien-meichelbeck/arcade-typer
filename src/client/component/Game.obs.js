@@ -15,13 +15,6 @@ export default ({ props$ }) => {
     .distinctUntilChanged()
     .map(({ content }) => content.split(' '))
 
-  const currentPlayer$ = gameState$
-    .map(({ players }) => {
-      const player = players.find(player => player.id === account().id)
-      return { ...player, ...account() }
-    })
-    .distinctUntilChanged()
-
   const input$ = new Rx.Subject()
   const currentIndex$ = round$.switchMap(() =>
     input$
@@ -38,15 +31,15 @@ export default ({ props$ }) => {
 
   const inputValue$ = currentIndex$.distinctUntilChanged().switchMap(() => input$.startWith(''))
   const expectedWord$ = currentIndex$.withLatestFrom(words$, (index, words) => words[index])
-  const hasFinished$ = currentIndex$
-    .withLatestFrom(words$)
-    .filter(([index, words]) => index >= words.length)
-    .mapTo(true)
-
   const isCorrectWord$ = inputValue$.withLatestFrom(
     expectedWord$,
     (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue,
   )
+
+  const hasFinished$ = currentIndex$
+    .withLatestFrom(words$)
+    .filter(([index, words]) => index >= words.length)
+    .mapTo(true)
 
   const speed$ = gameState$
     .pluck('status')
@@ -84,7 +77,12 @@ export default ({ props$ }) => {
     hasFinished$,
     gameState$,
     words$,
-    currentPlayer$,
     gameId$,
+    currentPlayer$: gameState$
+      .map(({ players }) => {
+        const player = players.find(player => player.id === account().id)
+        return { ...player, ...account() }
+      })
+      .distinctUntilChanged(),
   }
 }
