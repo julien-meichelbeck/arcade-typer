@@ -31,7 +31,7 @@ export default ({ props$ }) => {
         return index
       }, 0)
       .startWith(0)
-      .distinctUntilChanged()
+      .distinctUntilChanged(),
   )
 
   const inputValue$ = currentIndex$.distinctUntilChanged().switchMap(() => input$.startWith(''))
@@ -43,7 +43,7 @@ export default ({ props$ }) => {
 
   const isCorrectWord$ = inputValue$.withLatestFrom(
     expectedWord$,
-    (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue
+    (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue,
   )
 
   const AVERAGE_CHARS_PER_WORD = 5
@@ -60,11 +60,11 @@ export default ({ props$ }) => {
             .interval(1000)
             .timeInterval()
             .takeUntil(hasFinished$),
-          hasFinished$.startWith(false)
+          hasFinished$.startWith(false),
         )
         .withLatestFrom(words$, currentIndex$, (_interval, words, index) => {
           const durationInMinutes = (Date.now() - startTime) / 1000 / 60
-          const typedCharactersCount = words.slice(0, index).reduce((acc, elem) => acc + elem.length, 0)
+          const typedCharactersCount = words.slice(0, index).reduce((acc, elem) => acc + elem.length, 0) + index
           return Math.round(typedCharactersCount / AVERAGE_CHARS_PER_WORD / durationInMinutes * 1.2)
         })
     })
