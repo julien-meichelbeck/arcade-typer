@@ -7,8 +7,13 @@ import HomePage from 'client/component//Home'
 import GamePage from 'client/component//Game'
 import NotFoundPage from 'client/component//not-found'
 import Container from 'client/component/Container'
+import account from 'client/account'
+import Rx from 'rxjs'
+import recompact from 'shared/modules/recompact'
 
-const App = () => (
+export default recompact.withObs(() => ({
+  currentAccount$: new Rx.BehaviorSubject(account),
+}))(() => (
   <div>
     <Nav />
     <Container>
@@ -19,6 +24,4 @@ const App = () => (
       </Switch>
     </Container>
   </div>
-)
-
-export default App
+))

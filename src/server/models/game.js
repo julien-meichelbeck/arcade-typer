@@ -1,7 +1,8 @@
 import * as redis from 'server/redis'
 import nameGenerator from 'server/services/nameGenerator'
 import { WAITING_ROOM, COUNTDOWN, NEXT_GAME_COUNTDOWN } from 'shared/statuses'
-import { isProd, sample, now } from 'shared/utils'
+import { sample, now } from 'shared/utils'
+import knex from 'server/database'
 import { GET_GAME_STATE } from 'shared/actions/games'
 import { startCountdown, startNextGameCountdown } from './asyncActions'
 import handleGameChange from './handleGameChange'
@@ -16,44 +17,23 @@ const COLORS = [
   'rgb(210, 0, 142)',
 ]
 
-const TEXTS = isProd
-  ? [
-      {
-        content:
-          'I want you to remember, Clark... In all the years to come... in your most private moments... I want you to remember my hand at your throat... I want you to remember the one man who beat you...',
-        source: 'The Dark Knight Rises - Frank Miller',
-      },
-      {
-        content:
-          'The accumulated filth of all their sex and murder will foam up about their waists and all the whores and politicians will look up and shout "Save us!"... and I\'ll look down and whisper "No."',
-        source: 'Watchmen - Alan Moore',
-      },
-      {
-        content:
-          'Heard joke once: Man goes to doctor. Says he\'s depressed. Says life seems harsh and cruel. Says he feels all alone in a threatening world where what lies ahead is vague and uncertain. Doctor says, "Treatment is simple. Great clown Pagliacci is in town tonight. Go and see him. That should pick you up." Man bursts into tears. Says, "But doctor... I am Pagliacci.',
-        source: 'Watchmen - Alan Moore',
-      },
-    ]
-  : [
-      {
-        content: 'Foo is bar',
-        source: 'Watchmen - Alan Moore',
-      },
-      {
-        content: 'Bar is foo',
-        source: 'Watchmen - Alan Moore',
-      },
-      {
-        content: 'Glu is baz',
-        source: 'Watchmen - Alan Moore',
-      },
-    ]
-
 const toRedisKey = gameId => `games:${gameId}`
 
 const handlePlayerState = (player, state) => {
-  const isDone = player.progress >= state.text.content.split(' ').length
+  const isDone = player.progress >= state.text.body.split(' ').length
   return isDone ? { ...player, status: 'done', doneAt: now() } : player
+}
+
+const randomText = async () => {
+  const { body, source } = await knex()
+    .from('texts')
+    .select(['body', 'source'])
+    .orderByRaw('RANDOM()')
+    .first()
+  return {
+    body,
+    source,
+  }
 }
 
 export default class Game {
@@ -67,10 +47,10 @@ export default class Game {
     })
   }
 
-  static create() {
+  static async create() {
     const game = new Game({
       gameId: nameGenerator(),
-      text: sample(TEXTS),
+      text: await randomText(),
       players: [],
       createdAt: now(),
       round: 0,
@@ -130,7 +110,7 @@ export default class Game {
         player =>
           player.id === playerState.id
             ? handlePlayerState({ ...player, ...playerState }, this.state, this.gameId, this.io)
-            : player
+            : player,
       ),
     })
   }
@@ -141,7 +121,7 @@ export default class Game {
     if (players.length === 0) this.destroy()
   }
 
-  reset() {
+  async reset() {
     const players = this.state.players.map(player => ({
       ...player,
       speed: 0,
@@ -150,13 +130,14 @@ export default class Game {
       doneAt: null,
     }))
     this.setState({
-      text: sample(TEXTS),
+      text: await randomText(),
       status: WAITING_ROOM,
       round: this.state.round + 1,
       countdown: null,
       nextGameCountdown: null,
       players,
     })
+    return this
   }
 
   save() {

@@ -1,13 +1,13 @@
 import 'babel-polyfill'
 import compression from 'compression'
 import express from 'express'
+import bodyParser from 'body-parser'
 import { Server } from 'http'
 import socketIO from 'socket.io'
 import connectRedis from 'connect-redis'
 import session from 'express-session'
-import passport from 'passport'
+import passport from 'server/passport'
 import cookieParser from 'cookie-parser'
-import LocalStrategy from 'passport-local'
 import routing from 'server/routing'
 import { WEB_PORT, STATIC_PATH } from 'shared/config'
 import { isProd } from 'shared/utils'
@@ -15,40 +15,6 @@ import * as redis from 'server/redis'
 import setUpSocket from 'server/socket'
 
 const RedisStore = connectRedis(session)
-
-const USERS = [
-  { id: 123, username: 'foo', password: 'bar', token: 'dzjakljdzaljdazkljzad' },
-  { id: 455, username: 'clark', password: 'kent', token: 'odizoijakljdzaljdazkljzad' },
-]
-
-const strategy = new LocalStrategy((user, pwd, done) => {
-  const currentUser = {
-    id: user,
-    username: user,
-    password: user,
-    token: user,
-  } // USERS.find(({ username }) => user === username)
-  if (currentUser) {
-    done(null, currentUser)
-  } else {
-    done(null, false)
-  }
-})
-passport.use(strategy)
-passport.serializeUser((user, done) => {
-  done(null, user.token)
-})
-
-passport.deserializeUser((authToken, done) => {
-  const user = {
-    id: authToken,
-    username: authToken,
-    password: authToken,
-    token: authToken,
-  } // USERS.find(({ token }) => token === authToken)
-  done(null, user)
-})
-
 const app = express()
 const http = Server(app)
 const io = socketIO(http)
@@ -72,10 +38,9 @@ app.use(
 )
 app.use(STATIC_PATH, express.static('dist'))
 app.use(STATIC_PATH, express.static('public'))
+app.use(bodyParser.json())
 app.use(cookieParser())
-app.use(passport.initialize())
-app.use(passport.session())
-
+passport(app)
 routing(app)
 
 http.listen(WEB_PORT, () => {

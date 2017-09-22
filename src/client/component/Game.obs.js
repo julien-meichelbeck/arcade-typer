@@ -1,5 +1,4 @@
 import Rx from 'rxjs/Rx'
-import account from 'client/account'
 import { gameState$ } from 'client/socket'
 import { sendPlayerState } from 'client/socketApi'
 import { PLAYING } from 'shared/statuses'
@@ -7,13 +6,13 @@ import isEqual from 'lodash/isEqual'
 
 const AVERAGE_CHARS_PER_WORD = 5
 
-export default ({ props$ }) => {
+export default ({ props$, currentAccount$ }) => {
   const gameId$ = props$.pluck('gameId').distinctUntilChanged()
   const round$ = gameState$.pluck('round').distinctUntilChanged()
   const words$ = gameState$
     .pluck('text')
     .distinctUntilChanged()
-    .map(({ content }) => content.split(' '))
+    .map(({ body }) => body.split(' '))
 
   const input$ = new Rx.Subject()
   const currentIndex$ = round$.switchMap(() =>
@@ -63,7 +62,11 @@ export default ({ props$ }) => {
     })
 
   speed$
-    .withLatestFrom(currentIndex$, gameId$, (speed, progress, gameId) => ({ playerState: { progress, speed }, gameId }))
+    .withLatestFrom(currentIndex$, gameId$, currentAccount$, (speed, progress, gameId, currentAccount) => ({
+      playerState: { progress, speed },
+      gameId,
+      account: currentAccount,
+    }))
     .distinctUntilChanged(isEqual)
     .subscribe(sendPlayerState)
 
@@ -79,9 +82,10 @@ export default ({ props$ }) => {
     words$,
     gameId$,
     currentPlayer$: gameState$
-      .map(({ players }) => {
-        const player = players.find(player => player.id === account().id)
-        return { ...player, ...account() }
+      .withLatestFrom(currentAccount$)
+      .map(([{ players }, currentAccount]) => {
+        const player = players.find(player => player.id === currentAccount.id)
+        return { ...player, ...currentAccount }
       })
       .distinctUntilChanged(),
   }

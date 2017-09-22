@@ -10,7 +10,7 @@ const computeStatus = ({ players, status, countdown }) => {
 }
 
 const computePlayersStatuses = ({ text, players }) => {
-  const textSize = text.content.split(' ').length
+  const textSize = text.body.split(' ').length
   return players.map(player => (player.progress >= textSize ? { ...player, status: 'done', doneAt: now() } : player))
 }
 

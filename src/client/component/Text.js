@@ -3,7 +3,9 @@ import injectSheet from 'react-jss'
 import classNames from 'classnames'
 
 const styles = {
-  root: {},
+  root: {
+    margin: 0,
+  },
   lead: {
     fontSize: '24px',
     fontWeight: 'lighter',
@@ -11,13 +13,9 @@ const styles = {
 }
 
 export default injectSheet(styles)(({ children, classes, sheet, lead, className: classNameProp, ...props }) => {
-  const className = classNames(
-    {
-      [classes.root]: true,
-      [classes.lead]: lead,
-    },
-    classNameProp,
-  )
+  const className = classNames(classes.root, classNameProp, {
+    [classes.lead]: lead,
+  })
   return (
     <p className={className} {...props}>
       {children}

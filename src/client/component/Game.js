@@ -12,17 +12,21 @@ import provideObs from './Game.obs'
 
 export default recompact.compose(
   recompact.setDisplayName('Game'),
+  recompact.pluckObs(['currentAccount$']),
   recompact.lifecycle({
     componentWillMount() {
-      joinGame(this.props.gameId)
+      const { gameId, currentAccount: player } = this.props
+      joinGame({ gameId, player })
     },
     componentWillUnmount() {
-      leaveGame(this.props.gameId)
+      const { gameId, currentAccount: player } = this.props
+      leaveGame({ gameId, player })
     },
     componentWillReceiveProps({ gameId }) {
       if (gameId !== this.props.gameId) {
-        leaveGame(this.props.gameId)
-        joinGame(gameId)
+        const { currentAccount: player } = this.props
+        leaveGame({ gameId: this.props.gameId, player })
+        joinGame({ gameId })
       }
     },
   }),

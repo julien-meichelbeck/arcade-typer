@@ -1,41 +1,37 @@
-import 'isomorphic-fetch'
 import React from 'react'
-import { connect } from 'react-redux'
 import recompact from 'shared/modules/recompact'
-import { saveAccount } from 'shared/action/accounts'
 import Button from 'client/component/Button'
+import FormGroup from 'client/component/FormGroup'
 import Input from 'client/component/Input'
-import Text from 'client/component/Text'
-import { gameRoute } from 'shared/routes'
 import { withRouter } from 'react-router'
+import provideObs from './LoginForm.obs'
 
 export default recompact.compose(
   withRouter,
-  connect(({ game }) => ({ game }), dispatch => ({ dispatch })),
-  recompact.withState('username', 'setUsername', ''),
+  recompact.pluckObs(['currentAccount$']),
+  recompact.branch(({ currentAccount }) => currentAccount, () => () => <p>Connected.</p>),
+  recompact.withState('username', 'onUsernameChange', ''),
+  recompact.withState('password', 'onPasswordChange', ''),
+  recompact.connectObs(provideObs),
+  recompact.eventToValue('onUsernameChange'),
+  recompact.eventToValue('onPasswordChange'),
   recompact.withHandlers({
-    handleSubmit: ({ dispatch, username, password, game, history }) => event => {
+    onSubmit: ({ onSubmit }) => event => {
       event.preventDefault()
-      fetch(`/login?username=${username}&password=${password}`, { method: 'POST', credentials: 'include' })
-        .then(response => response.json())
-        .then(data => {
-          dispatch(saveAccount(data.account))
-          if (game && game.id) {
-            history.push(gameRoute(game.id))
-          }
-        })
-        .catch(error => console.log(error))
+      onSubmit()
     },
   }),
-)(({ setUsername, username, handleSubmit }) => (
-  <form onSubmit={handleSubmit}>
-    <div>
-      <Text lead>Please enter a username.</Text>
-      <Input name="username" value={username} onChange={({ target: { value } }) => setUsername(value)} />
-    </div>
+)(({ onUsernameChange, username, password, onPasswordChange, onSubmit }) => (
+  <form onSubmit={onSubmit}>
+    <FormGroup label="Username">
+      <Input name="username" value={username} onChange={onUsernameChange} />
+    </FormGroup>
+    <FormGroup label="Password">
+      <Input type="password" name="password" value={password} onChange={onPasswordChange} />
+    </FormGroup>
     <br />
     <button type="submit" style={{ display: 'none' }} />
-    <Button primary spaced onClick={handleSubmit}>
+    <Button primary spaced onClick={onSubmit}>
       Join
     </Button>
     <Button spaced>Cancel</Button>

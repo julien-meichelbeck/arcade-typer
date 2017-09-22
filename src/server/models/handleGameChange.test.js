@@ -11,7 +11,7 @@ beforeEach(() => {
   clark = [{ id: 2, username: 'Clark Kent', progress: null }]
   game = {
     id: 1,
-    text: { content: 'This is a placeholder text' },
+    text: { body: 'This is a placeholder text' },
     players: bruce,
   }
 })
