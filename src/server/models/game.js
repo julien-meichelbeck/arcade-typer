@@ -17,7 +17,8 @@ const COLORS = [
   'rgb(210, 0, 142)',
 ]
 
-const toRedisKey = gameId => `games:${gameId}`
+const REDIS_PREFIX = 'games:'
+const toRedisKey = gameId => `${REDIS_PREFIX}${gameId}`
 
 const handlePlayerState = (player, state) => {
   const isDone = player.progress >= state.text.body.split(' ').length
@@ -118,7 +119,7 @@ export default class Game {
   removePlayer(player) {
     const { players } = this.state
     this.setState({ players: players.filter(p => p.id !== player.id) })
-    if (players.length === 0) this.destroy()
+    if (this.state.players.length === 0) this.destroy()
   }
 
   async reset() {
@@ -153,9 +154,6 @@ export default class Game {
   }
 
   toClientData() {
-    return {
-      gameId: this.gameId,
-      ...this.state,
-    }
+    return { gameId: this.gameId, ...this.state }
   }
 }

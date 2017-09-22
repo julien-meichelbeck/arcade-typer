@@ -6,6 +6,8 @@ import sessionsController from 'server/controllers/sessionsController'
 import { gameRoute, PLAY_ROUTE, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
 
 export default app => {
+  app.get('/', gamesController.index)
+
   // Sessions
   app.post(LOGIN_ROUTE, sessionsController.login)
   app.get(LOGOUT_ROUTE, sessionsController.logout)
