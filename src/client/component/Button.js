@@ -49,15 +49,11 @@ const styles = {
 export default injectSheet(
   styles,
 )(({ children, classes, sheet, primary, dark, spaced, to, className: classNameProp, ...props }) => {
-  const className = classNames(
-    {
-      [classes.root]: true,
-      [classes.primary]: primary,
-      [classes.spaced]: spaced,
-      [classes.dark]: dark,
-    },
-    classNameProp,
-  )
+  const className = classNames(classNameProp, classes.root, {
+    [classes.primary]: primary,
+    [classes.spaced]: spaced,
+    [classes.dark]: dark,
+  })
   return to ? (
     <Link to={to} className={className} {...props}>
       {children}
