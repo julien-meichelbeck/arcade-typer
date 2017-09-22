@@ -31,7 +31,8 @@ const config = {
     },
   }),
   production: Object.assign({}, configDefault, {
-    debug: false,
+    debug: true,
+    connection: process.env.DATABASE_URL,
     client: 'postgresql',
     pool: {
       min: 2,
@@ -51,6 +52,7 @@ if (process.env.DATABASE_URL) {
     database: pgProd.path.substring(1),
     ssl: true,
   }
+  console.log('PG CONFIGURATION: ', config.production.connection)
 }
 
 module.exports = config
