@@ -1,8 +1,9 @@
 export const WEB_PORT = process.env.PORT || 8000
 export const REDIS_URL = process.env.REDIS_URL
+export const POSTGRES_URL = process.env.POSTGRES_URL
 export const SERVER_URL = 'http://localhost:8000'
 export const STATIC_PATH = '/static'
-export const APP_NAME = 'typing_game'
+export const APP_NAME = 'arcade_typer'
 
 export const WDS_PORT = 7000
 

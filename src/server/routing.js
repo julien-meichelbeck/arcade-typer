@@ -3,12 +3,11 @@ import passport from 'passport'
 import renderApp from 'server/renderApp'
 import gamesController from 'server/controllers/gamesController'
 import sessionsController from 'server/controllers/sessionsController'
-import { setCurrentUser } from 'server/passport'
 import { gameRoute, PLAY_ROUTE, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
 
 export default app => {
   // Sessions
-  app.post(LOGIN_ROUTE, passport.authenticate('local'), sessionsController.login)
+  app.post(LOGIN_ROUTE, passport.authenticate('local', { failureRedirect: '/' }), sessionsController.login)
   app.get(LOGOUT_ROUTE, sessionsController.logout)
 
   // Games
@@ -21,8 +20,7 @@ export default app => {
   })
 
   // Views
-  app.get('*', (req, res, next) => {
-    setCurrentUser(req, res, next)
+  app.get('*', (req, res) => {
     res.send(renderApp(req))
   })
 

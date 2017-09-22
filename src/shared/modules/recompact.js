@@ -35,6 +35,11 @@ import Rx from 'rxjs/Rx'
 
 setObservableConfig(rxjsObservableConfig)
 
+const eventToValue = eventName =>
+  withHandlers({
+    [eventName]: props => event => props[eventName](event.target.value),
+  })
+
 const pluckObs = obs =>
   connectObs(observables =>
     obs.reduce((acc, elem) => {
@@ -62,6 +67,7 @@ export default {
   createEagerFactory,
   createHelper,
   debug,
+  eventToValue,
   defaultProps,
   flattenProp,
   getContext,

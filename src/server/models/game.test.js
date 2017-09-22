@@ -13,7 +13,7 @@ beforeEach(() => {
   Date.now = jest.genMockFunction().mockReturnValue(12345)
   game = new Game({
     id: 1,
-    text: { content: 'This is a placeholder text' },
+    text: { body: 'This is a placeholder text' },
     players: [{ id: 1, username: 'Bruce Wayne', progress: 2 }],
   })
 })
@@ -57,7 +57,7 @@ test('sets doneAt', () => {
 
 test('toJson', () => {
   expect(game.toJson()).toEqual(
-    '{"id":1,"text":{"content":"This is a placeholder text"},"players":[{"id":1,"username":"Bruce Wayne","progress":2}]}',
+    '{"id":1,"text":{"body":"This is a placeholder text"},"players":[{"id":1,"username":"Bruce Wayne","progress":2}]}',
   )
 })
 
@@ -69,14 +69,15 @@ test('create', () => {
 })
 
 test('reset', () => {
-  game.reset()
-  expect(game.toClientData()).toEqual({
-    countdown: null,
-    gameId: undefined,
-    id: 1,
-    nextGameCountdown: null,
-    players: [{ doneAt: null, id: 1, progress: null, speed: 0, status: null, username: 'Bruce Wayne' }],
-    status: 'WAITING_ROOM',
-    text: { author: 'Lorem Ipsum', content: 'Foo is bar' },
-  })
+  game.reset().then(game =>
+    expect(game.toClientData()).toEqual({
+      countdown: null,
+      gameId: undefined,
+      id: 1,
+      nextGameCountdown: null,
+      players: [{ doneAt: null, id: 1, progress: null, speed: 0, status: null, username: 'Bruce Wayne' }],
+      status: 'WAITING_ROOM',
+      text: { author: 'Lorem Ipsum', body: 'Foo is bar' },
+    }),
+  )
 })

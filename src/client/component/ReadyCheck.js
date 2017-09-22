@@ -11,9 +11,9 @@ const styles = {
   },
 }
 
-const onPlayerReady = ({ gameId }) => e => {
+const onPlayerReady = ({ gameId, currentPlayer }) => e => {
   if (e.code === 'Enter') {
-    sendPlayerState({ gameId, playerState: { status: 'ready' } })
+    sendPlayerState({ gameId, playerState: { status: 'ready' }, account: currentPlayer })
     document.removeEventListener('keydown', onPlayerReady)
   }
 }

@@ -1,1 +1,1 @@
-export default () => window.__PRELOADED_STATE__.account
+export default window.__PRELOADED_STATE__.account
