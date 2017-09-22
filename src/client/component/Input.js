@@ -20,7 +20,5 @@ const styles = {
 }
 
 export default injectSheet(styles)(({ children, classes, sheet, className: classNameProp, ...props }) => (
-  <input type="text" className={classNames(classes.root, classNameProp)} {...props}>
-    {children}
-  </input>
+  <input type="text" className={classNames(classes.root, classNameProp)} {...props} value={children} />
 ))

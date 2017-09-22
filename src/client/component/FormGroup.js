@@ -12,6 +12,7 @@ const styles = {
     paddingRight: '14px',
     alignSelf: 'center',
     fontWeight: 'bold',
+    minWidth: '100px',
   },
 }
 

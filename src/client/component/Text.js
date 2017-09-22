@@ -10,10 +10,15 @@ const styles = {
     fontSize: '24px',
     fontWeight: 'lighter',
   },
+  error: {
+    color: 'red',
+  },
 }
 
-export default injectSheet(styles)(({ children, classes, sheet, lead, className: classNameProp, ...props }) => {
-  const className = classNames(classes.root, classNameProp, {
+export default injectSheet(
+  styles,
+)(({ children, classes, sheet, lead, uiStyle, className: classNameProp, ...props }) => {
+  const className = classNames(classes.root, classNameProp, classes[uiStyle], {
     [classes.lead]: lead,
   })
   return (

@@ -3,6 +3,7 @@ import recompact from 'shared/modules/recompact'
 import Button from 'client/component/Button'
 import FormGroup from 'client/component/FormGroup'
 import Input from 'client/component/Input'
+import Text from 'client/component/Text'
 import { withRouter } from 'react-router'
 import provideObs from './LoginForm.obs'
 
@@ -21,7 +22,7 @@ export default recompact.compose(
       onSubmit()
     },
   }),
-)(({ onUsernameChange, username, password, onPasswordChange, onSubmit }) => (
+)(({ onUsernameChange, username, password, onPasswordChange, onSubmit, errorMessage }) => (
   <form onSubmit={onSubmit}>
     <FormGroup label="Username">
       <Input name="username" value={username} onChange={onUsernameChange} />
@@ -29,8 +30,8 @@ export default recompact.compose(
     <FormGroup label="Password">
       <Input type="password" name="password" value={password} onChange={onPasswordChange} />
     </FormGroup>
-    <br />
     <button type="submit" style={{ display: 'none' }} />
+    {errorMessage ? <Text uiStyle="error">{errorMessage}</Text> : null}
     <Button primary spaced onClick={onSubmit}>
       Join
     </Button>

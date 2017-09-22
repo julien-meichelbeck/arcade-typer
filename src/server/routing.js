@@ -7,12 +7,12 @@ import { gameRoute, PLAY_ROUTE, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
 
 export default app => {
   // Sessions
-  app.post(LOGIN_ROUTE, passport.authenticate('local', { failureRedirect: '/' }), sessionsController.login)
+  app.post(LOGIN_ROUTE, sessionsController.login)
   app.get(LOGOUT_ROUTE, sessionsController.logout)
 
   // Games
   app.post(PLAY_ROUTE, gamesController.create)
-  app.get(gameRoute(), gamesController.show)
+  app.get(gameRoute(), passport.authenticate('local', { failureRedirect: '/' }), gamesController.show)
 
   // Errors
   app.get('/500', () => {

@@ -1,10 +1,11 @@
 import 'isomorphic-fetch'
 import Rx from 'rxjs'
 import { LOGIN_ROUTE } from 'shared/routes'
+import { BAD_PASSWORD } from 'shared/errors'
 
 export default ({ props$, currentAccount$ }) => {
   const submit$ = new Rx.Subject()
-  submit$
+  const $loginTask = submit$
     .withLatestFrom(props$)
     .switchMap(([, { username, password }]) =>
       Rx.Observable.fromPromise(
@@ -20,9 +21,20 @@ export default ({ props$, currentAccount$ }) => {
     )
     .filter(response => response.ok)
     .switchMap(response => Rx.Observable.fromPromise(response.json()))
+    .publishReplay(1)
+    .refCount()
+
+  $loginTask
+    .filter(({ success }) => success)
     .map(({ account }) => account)
     .subscribe(currentAccount$)
+
+  const errorMessage$ = $loginTask
+    .filter(({ success }) => !success)
+    .map(({ message }) => (message === BAD_PASSWORD ? 'Another password is expected for this username' : message))
+
   return {
     onSubmit: submit$,
+    errorMessage: errorMessage$,
   }
 }
