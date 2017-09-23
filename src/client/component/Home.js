@@ -11,7 +11,7 @@ export default () => (
     {games ? (
       <ul>
         {games.map(name => name.replace('games:', '')).map(gameId => (
-          <li>
+          <li key={gameId}>
             <Link to={gameRoute(gameId)}>{gameId}</Link>
           </li>
         ))}

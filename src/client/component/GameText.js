@@ -22,10 +22,10 @@ const styles = {
 
 export default recompact.compose(
   injectSheet(styles),
-  recompact.connectObs(({ currentPlayer$, currentIndex$, isCorrectWord$, gameState$, words$ }) => ({
+  recompact.connectObs(({ currentPlayer$, currentIndex$, inputValue$, gameState$, words$ }) => ({
     currentIndex: currentIndex$,
-    isCorrectWord: isCorrectWord$,
     words: words$,
+    inputValue: inputValue$,
     countdown: gameState$.pluck('countdown'),
     status: gameState$.pluck('status'),
     source: gameState$.pluck('text', 'source'),
@@ -39,14 +39,14 @@ export default recompact.compose(
   })),
   recompact.branch(({ words }) => !words, recompact.renderNothing),
   recompact.pure,
-)(({ isCorrectWord, words, currentIndex, source, classes, countdown, status, oponentsColorMapping }) => (
+)(({ words, currentIndex, source, classes, countdown, status, oponentsColorMapping, inputValue }) => (
   <div className={classes.root}>
     <CountdownTimer countdown={countdown} />
     {words.map((word, i) => (
       <Word
         key={word + i}
+        inputValue={inputValue}
         isCurrentWord={i === currentIndex}
-        isCorrect={isCorrectWord}
         blurry={![PLAYING, NEXT_GAME_COUNTDOWN].includes(status)}
         oponentColor={oponentsColorMapping[i]}
       >
