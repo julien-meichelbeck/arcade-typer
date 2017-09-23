@@ -15,18 +15,21 @@ export default ({ props$, currentAccount$ }) => {
     .map(({ body }) => body.split(' '))
 
   const input$ = new Rx.Subject()
-  const currentIndex$ = round$.switchMap(() =>
-    input$
-      .withLatestFrom(words$)
-      .scan((index, [input, words]) => {
-        if (input === `${words[index]} `) {
-          index += 1
-        }
-        return index
-      }, 0)
-      .startWith(0)
-      .distinctUntilChanged(),
-  )
+  const currentIndex$ = round$
+    .switchMap(() =>
+      input$
+        .withLatestFrom(words$)
+        .scan((index, [input, words]) => {
+          const isLastWord = index === words.length - 1
+          const isCorrectWord = input === (isLastWord ? words[index] : `${words[index]} `)
+          if (isCorrectWord) index += 1
+          return index
+        }, 0)
+        .startWith(0)
+        .distinctUntilChanged(),
+    )
+    .publishReplay(1)
+    .refCount()
 
   const inputValue$ = currentIndex$.distinctUntilChanged().switchMap(() => input$.startWith(''))
   const expectedWord$ = currentIndex$.withLatestFrom(words$, (index, words) => words[index])
