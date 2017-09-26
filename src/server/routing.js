@@ -3,7 +3,8 @@ import passport from 'passport'
 import renderApp from 'server/renderApp'
 import gamesController from 'server/controllers/gamesController'
 import sessionsController from 'server/controllers/sessionsController'
-import { gameRoute, PLAY_ROUTE, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
+import usersController from 'server/controllers/usersController'
+import { gameRoute, PLAY_ROUTE, userRoute, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
 
 export default app => {
   app.get('/', gamesController.index)
@@ -15,6 +16,9 @@ export default app => {
   // Games
   app.post(PLAY_ROUTE, gamesController.create)
   app.get(gameRoute(), passport.authenticate('local', { failureRedirect: '/' }), gamesController.show)
+
+  // API
+  app.get(userRoute(), usersController.show)
 
   // Errors
   app.get('/500', () => {

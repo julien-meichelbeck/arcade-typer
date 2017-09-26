@@ -26,7 +26,7 @@ const handlePlayerState = (player, state) => {
 }
 
 const randomText = async () => {
-  const text = await Text.query(q => q.orderByRaw('RANDOM()').limit(1)).fetch()
+  const text = await Text.query(q => q.orderByRaw('RANDOM()')).fetch()
   return text.attributes
 }
 

@@ -52,7 +52,6 @@ if (process.env.DATABASE_URL) {
     database: pgProd.path.substring(1),
     ssl: true,
   }
-  console.log('PG CONFIGURATION: ', config.production.connection)
 }
 
 module.exports = config

@@ -2,7 +2,7 @@ import passport from 'passport'
 import LocalStrategy from 'passport-local'
 import knex from 'server/database'
 import { BAD_PASSWORD } from 'shared/errors'
-import { createUser } from 'server/models/User'
+import User from 'server/models/Users'
 import bcrypt from 'bcrypt'
 
 export default app => {
@@ -18,7 +18,7 @@ export default app => {
           } else if (user) {
             next(null, false, { message: BAD_PASSWORD })
           } else {
-            createUser({ username, password }).then(id => {
+            User.createUser({ username, password }).then(id => {
               next(null, { username, id })
             })
           }

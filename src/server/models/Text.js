@@ -1,6 +1,6 @@
-import bookshelf from 'server/bookshelf'
+import Model from './Model'
 
-export default class Text extends bookshelf.Model {
+export default class Text extends Model {
   get tableName() {
     return 'texts'
   }

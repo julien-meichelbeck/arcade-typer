@@ -14,7 +14,7 @@ const renderApp = (req, additionalState = {}) => {
           <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Changa+One" rel="stylesheet">
           <link rel="stylesheet" href="${STATIC_PATH}/css/style.css">
         </head>
-        <body>
+        <body style="background-color: white;">
           <div class="${APP_CONTAINER_CLASS}"></div>
           <script>
             window.__PRELOADED_STATE__ = ${initialState}
