@@ -2,8 +2,8 @@ import * as redis from 'server/redis'
 import nameGenerator from 'server/services/nameGenerator'
 import { WAITING_ROOM, COUNTDOWN, NEXT_GAME_COUNTDOWN } from 'shared/statuses'
 import { sample, now } from 'shared/utils'
-import knex from 'server/database'
 import { GET_GAME_STATE } from 'shared/actions/games'
+import Text from 'server/models/Text'
 import { startCountdown, startNextGameCountdown } from './asyncActions'
 import handleGameChange from './handleGameChange'
 
@@ -26,15 +26,8 @@ const handlePlayerState = (player, state) => {
 }
 
 const randomText = async () => {
-  const { body, source } = await knex()
-    .from('texts')
-    .select(['body', 'source'])
-    .orderByRaw('RANDOM()')
-    .first()
-  return {
-    body,
-    source,
-  }
+  const text = await Text.query(q => q.orderByRaw('RANDOM()').limit(1)).fetch()
+  return text.attributes
 }
 
 export default class Game {

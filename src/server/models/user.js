@@ -1,14 +1,16 @@
-import knex from 'server/database'
+import bookshelf from 'server/bookshelf'
 import bcrypt from 'bcrypt'
 
 const saltRounds = 10
 
-export const createUser = async ({ username, password }) => {
-  const hash = await bcrypt.hash(password, saltRounds)
-  return knex()
-    .insert({ username, password: hash })
-    .into('users')
-    .returning('id')
+export default class User extends bookshelf.Model {
+  get tableName() {
+    return 'users'
+  }
 }
 
-export default createUser
+export const createUser = async ({ username, password }) => {
+  const hash = await bcrypt.hash(password, saltRounds)
+  const user = await new User({ username, password: hash }).save()
+  return user.get('id')
+}

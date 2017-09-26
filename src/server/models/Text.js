@@ -1,10 +1,7 @@
-import { Model } from 'objection'
-import connect from 'server/database'
+import bookshelf from 'server/bookshelf'
 
-Model.knex(connect())
-
-export default class Text extends Model {
-  static get tableName() {
+export default class Text extends bookshelf.Model {
+  get tableName() {
     return 'texts'
   }
 }

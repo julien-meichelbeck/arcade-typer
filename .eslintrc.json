@@ -24,6 +24,7 @@
     "react/prop-types": "off",
     "no-nested-ternary": "off",
     "no-shadow": "off",
+    "class-methods-use-this": "off",
     "import/no-named-as-default-member": "off",
     "react/jsx-filename-extension": "off"
   },
