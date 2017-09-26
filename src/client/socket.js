@@ -11,7 +11,7 @@ export const gameState$ = Rx.Observable
     socket.on(GET_GAME_STATE, newGameState => {
       if (!isEqual(window.gameState, newGameState)) {
         observer.next(newGameState)
-        // console.log(newGameState)
+        console.log(newGameState)
       }
     })
   })

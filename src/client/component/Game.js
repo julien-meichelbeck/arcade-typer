@@ -26,14 +26,14 @@ export default recompact.compose(
       if (gameId !== this.props.gameId) {
         const { currentAccount: player } = this.props
         leaveGame({ gameId: this.props.gameId, player })
-        joinGame({ gameId })
+        joinGame({ gameId, player })
       }
     },
   }),
   recompact.connectObs(() => ({ gameState: gameState$ })),
   recompact.branch(({ gameState }) => !gameState, recompact.renderNothing),
   recompact.withObs(provideObs),
-  recompact.connectObs(() => ({ gameStatus: gameState$.pluck('status') })),
+  recompact.connectObs(() => ({ gameStatus: gameState$.pluck('status') }))
 )(({ gameStatus }) => (
   <div style={{ width: '100%' }}>
     <GameTrack />

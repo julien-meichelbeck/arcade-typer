@@ -26,7 +26,7 @@ export default ({ props$, currentAccount$ }) => {
           return index
         }, 0)
         .startWith(0)
-        .distinctUntilChanged(),
+        .distinctUntilChanged()
     )
     .publishReplay(1)
     .refCount()
@@ -35,7 +35,7 @@ export default ({ props$, currentAccount$ }) => {
   const expectedWord$ = currentIndex$.withLatestFrom(words$, (index, words) => words[index])
   const isCorrectWord$ = inputValue$.withLatestFrom(
     expectedWord$,
-    (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue,
+    (inputValue, expectedWord) => expectedWord && expectedWord.slice(0, inputValue.length) === inputValue
   )
 
   const hasFinished$ = currentIndex$
@@ -55,7 +55,7 @@ export default ({ props$, currentAccount$ }) => {
             .interval(1000)
             .timeInterval()
             .takeUntil(hasFinished$),
-          hasFinished$.startWith(false),
+          hasFinished$.startWith(false)
         )
         .withLatestFrom(words$, currentIndex$, (_interval, words, index) => {
           const durationInMinutes = (Date.now() - startTime) / 1000 / 60
@@ -90,6 +90,8 @@ export default ({ props$, currentAccount$ }) => {
         const player = players.find(player => player.id === currentAccount.id)
         return { ...player, ...currentAccount }
       })
-      .distinctUntilChanged(),
+      .distinctUntilChanged()
+      .publishReplay(1)
+      .refCount(),
   }
 }

@@ -21,7 +21,7 @@ export default recompact.compose(
   withRouter,
   injectSheet(styles),
   recompact.pluckObs(['currentAccount$']),
-  recompact.connectObs(provideObs),
+  recompact.connectObs(provideObs)
 )(({ classes, currentAccount, onCreateGame }) => (
   <nav className={classes.root}>
     <Container style={{ display: 'flex' }}>

@@ -31,7 +31,7 @@ export default recompact.compose(
       <Input type="password" name="password" value={password} onChange={onPasswordChange} />
     </FormGroup>
     <button type="submit" style={{ display: 'none' }} />
-    {errorMessage ? <Text uiStyle="error">{errorMessage}</Text> : null}
+    {errorMessage ? <Text error>{errorMessage}</Text> : null}
     <Button primary spaced onClick={onSubmit}>
       Join
     </Button>

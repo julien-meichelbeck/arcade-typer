@@ -30,7 +30,7 @@ export default recompact.compose(
   recompact.withProps(({ gameState: { players } }) => ({
     rankedPlayers: orderBy(players.filter(({ doneAt }) => doneAt), ['doneAt']),
   })),
-  recompact.pure,
+  recompact.pure
 )(({ classes, words, gameState: { status, players }, rankedPlayers }) => (
   <div className={classes.root}>
     <Container>
