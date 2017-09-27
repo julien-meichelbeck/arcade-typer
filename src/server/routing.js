@@ -1,5 +1,3 @@
-// eslint-disable-no-named-as-default-member
-import passport from 'passport'
 import renderApp from 'server/renderApp'
 import gamesController from 'server/controllers/gamesController'
 import sessionsController from 'server/controllers/sessionsController'

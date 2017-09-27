@@ -1,4 +1,5 @@
 import React from 'react'
+import moment from 'moment'
 import recompact from 'shared/modules/recompact'
 import meanBy from 'lodash/meanBy'
 import Text from 'client/component/Text'
@@ -62,7 +63,7 @@ export default recompact.compose(
         <tbody>
           {histories.map(history => (
             <tr key={history.created_at}>
-              <td className={classes.td}>{history.created_at}</td>
+              <td className={classes.td}>{moment(history.created_at).format('MMMM Do YYYY, h:mm')}</td>
               <td className={classes.td}>
                 {history.position} {history.position === 1 ? '🏆' : null}
               </td>
