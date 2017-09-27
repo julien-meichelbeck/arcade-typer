@@ -13,8 +13,16 @@ const renderApp = (req, additionalState = {}) => {
           <title>Arcade typer</title>
           <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Press+Start+2P|Changa+One" rel="stylesheet">
           <link rel="stylesheet" href="${STATIC_PATH}/css/style.css">
+          <style>
+            a {
+              color: #dc005d;
+            }
+            * {
+              color: white;
+            }
+          </style>
         </head>
-        <body style="background-color: white;">
+        <body style="background: #000">
           <div class="${APP_CONTAINER_CLASS}"></div>
           <script>
             window.__PRELOADED_STATE__ = ${initialState}

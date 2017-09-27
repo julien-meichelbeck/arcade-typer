@@ -11,7 +11,7 @@ const styles = {
   root: {},
   siteTitle: {
     marginTop: 23,
-    color: 'rgb(38, 31, 66)',
+    color: '#2effff',
     fontSize: 18,
     textTransform: 'uppercase',
   },

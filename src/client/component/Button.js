@@ -19,7 +19,7 @@ const styles = {
     fontFamily: "'Montserrat', sans-serif",
     textTransform: 'uppercase',
     letterSpacing: '.025em',
-    color: '#6772e5',
+    color: '#dc005d',
     textDecoration: 'none',
     transition: 'all .15s ease',
     '&:hover': {
@@ -29,7 +29,7 @@ const styles = {
   },
   primary: {
     color: '#fff',
-    background: '#6772e5',
+    background: '#dc005d',
     '&:hover': {
       backgroundColor: '#7795f8',
     },
@@ -47,7 +47,7 @@ const styles = {
 }
 
 export default injectSheet(
-  styles,
+  styles
 )(({ children, classes, sheet, primary, dark, spaced, to, className: classNameProp, ...props }) => {
   const className = classNames(classNameProp, classes.root, {
     [classes.primary]: primary,
