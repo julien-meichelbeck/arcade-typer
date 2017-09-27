@@ -22,7 +22,8 @@ const toRedisKey = gameId => `${REDIS_PREFIX}${gameId}`
 
 const handlePlayerState = (player, state) => {
   const isDone = player.progress >= state.text.body.split(' ').length
-  return isDone ? { ...player, status: 'done', doneAt: now() } : player
+  const position = state.players.filter(({ doneAt }) => doneAt).length + 1
+  return isDone ? { ...player, status: 'done', doneAt: now(), position } : player
 }
 
 const randomText = async () => {
@@ -104,7 +105,7 @@ export default class Game {
         player =>
           player.id === playerState.id
             ? handlePlayerState({ ...player, ...playerState }, this.state, this.gameId, this.io)
-            : player,
+            : player
       ),
     })
   }
@@ -119,6 +120,7 @@ export default class Game {
     const players = this.state.players.map(player => ({
       ...player,
       speed: 0,
+      position: null,
       status: null,
       progress: null,
       doneAt: null,

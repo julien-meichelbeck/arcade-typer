@@ -4,8 +4,6 @@ import Player from 'client/component/Player'
 import Container from 'client/component/Container'
 import GameMessage from 'client/component//GameMessage'
 import recompact from 'shared/modules/recompact'
-import orderBy from 'lodash/orderBy'
-import findIndex from 'lodash/findIndex'
 
 const styles = {
   root: {
@@ -27,11 +25,8 @@ export default recompact.compose(
   injectSheet(styles),
   recompact.pluckObs(['gameState$', 'words$', 'currentPlayer$']),
   recompact.branch(({ gameState }) => !gameState, recompact.renderNothing),
-  recompact.withProps(({ gameState: { players } }) => ({
-    rankedPlayers: orderBy(players.filter(({ doneAt }) => doneAt), ['doneAt']),
-  })),
   recompact.pure
-)(({ classes, words, gameState: { status, players }, rankedPlayers }) => (
+)(({ classes, words, gameState: { status, players } }) => (
   <div className={classes.root}>
     <Container>
       <GameMessage />
@@ -40,7 +35,6 @@ export default recompact.compose(
           key={player.id}
           progressValue={player.progress || 0}
           progressMax={words.length}
-          position={findIndex(rankedPlayers, ({ id }) => id === player.id) + 1}
           gameStatus={status}
           {...player}
         />

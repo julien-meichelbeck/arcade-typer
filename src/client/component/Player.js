@@ -40,7 +40,7 @@ export default recompact.compose(
   injectSheet(styles),
   recompact.withProps(({ status, gameStatus }) => ({
     opacity: gameStatus === WAITING_ROOM || (gameStatus === READY_CHECK && status !== 'ready') ? 0.5 : 1,
-  })),
+  }))
 )(({ username, opacity, progressValue, progressMax, speed = 0, position, classes, color }) => (
   <div className={classes.root} style={{ color, opacity }}>
     <p className={classes.username}>
