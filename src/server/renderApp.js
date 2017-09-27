@@ -11,7 +11,7 @@ const renderApp = (req, additionalState = {}) => {
       <html>
         <head>
           <title>Arcade typer</title>
-          <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Changa+One" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css?family=Montserrat|Open+Sans|Press+Start+2P" rel="stylesheet">
           <link rel="stylesheet" href="${STATIC_PATH}/css/style.css">
         </head>
         <body style="background-color: white;">

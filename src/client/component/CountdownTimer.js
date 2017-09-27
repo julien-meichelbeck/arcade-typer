@@ -9,7 +9,7 @@ const styles = {
     top: '50%',
     transform: 'translate(-50%, -50%)',
     position: 'absolute',
-    fontFamily: "'Changa One', cursive",
+    fontFamily: "'Press Start 2P', cursive",
   },
 }
 

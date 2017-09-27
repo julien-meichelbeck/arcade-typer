@@ -1,5 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
+import classNames from 'classnames'
 
 const styles = {
   root: {
@@ -9,8 +10,8 @@ const styles = {
   },
 }
 
-export default injectSheet(styles)(({ classes, children, sheet, ...props }) => (
-  <div className={classes.root} {...props}>
+export default injectSheet(styles)(({ classes, className: classNameProp, children, sheet, ...props }) => (
+  <div className={classNames(classes.root, classNameProp)} {...props}>
     {children}
   </div>
 ))

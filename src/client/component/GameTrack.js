@@ -1,35 +1,19 @@
 import React from 'react'
-import injectSheet from 'react-jss'
 import Player from 'client/component/Player'
+import GameMessage from 'client/component/GameMessage'
+import Banner from 'client/component/Banner'
 import Container from 'client/component/Container'
-import GameMessage from 'client/component//GameMessage'
 import recompact from 'shared/modules/recompact'
-
-const styles = {
-  root: {
-    width: '100vw',
-    position: 'relative',
-    left: '50%',
-    right: '50%',
-    marginLeft: '-50vw',
-    marginRight: '-50vw',
-    minHeight: '200px',
-    padding: '14px 0 14px',
-    background: 'rgb(38, 31, 66)',
-    color: 'white',
-  },
-}
 
 export default recompact.compose(
   recompact.setDisplayName('GameTrack'),
-  injectSheet(styles),
   recompact.pluckObs(['gameState$', 'words$', 'currentPlayer$']),
   recompact.branch(({ gameState }) => !gameState, recompact.renderNothing),
   recompact.pure
-)(({ classes, words, gameState: { status, players } }) => (
-  <div className={classes.root}>
+)(({ words, gameState: { status, players } }) => (
+  <Banner>
+    <GameMessage />
     <Container>
-      <GameMessage />
       {players.map(player => (
         <Player
           key={player.id}
@@ -40,5 +24,5 @@ export default recompact.compose(
         />
       ))}
     </Container>
-  </div>
+  </Banner>
 ))

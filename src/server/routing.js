@@ -15,7 +15,7 @@ export default app => {
 
   // Games
   app.post(PLAY_ROUTE, gamesController.create)
-  app.get(gameRoute(), passport.authenticate('local', { failureRedirect: '/' }), gamesController.show)
+  app.get(gameRoute(), gamesController.show)
 
   // API
   app.get(userRoute(), usersController.show)
