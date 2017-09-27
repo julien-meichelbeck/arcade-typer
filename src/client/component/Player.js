@@ -27,7 +27,7 @@ const styles = {
   },
   speedMeter: {
     paddingLeft: 14,
-    fontFamily: "'Press Start 2P', cursive",
+    fontFamily: "'Changa One', cursive",
     fontSize: 29,
     position: 'relative',
     top: '-9px',

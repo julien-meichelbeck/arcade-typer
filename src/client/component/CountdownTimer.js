@@ -9,12 +9,12 @@ const styles = {
     top: '50%',
     transform: 'translate(-50%, -50%)',
     position: 'absolute',
-    fontFamily: "'Press Start 2P', cursive",
+    fontFamily: "'Changa One', cursive",
   },
 }
 
 export default recompact.compose(
   recompact.setDisplayName('Countdown'),
   recompact.branch(({ countdown }) => countdown === 0, recompact.renderNothing),
-  injectSheet(styles),
+  injectSheet(styles)
 )(({ classes, countdown }) => <div className={classes.root}>{countdown}</div>)

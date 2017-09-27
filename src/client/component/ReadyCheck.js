@@ -8,6 +8,7 @@ const styles = {
   root: {
     fontFamily: "'Montserrat', sans-serif",
     textAlign: 'center',
+    margin: '20px 0',
   },
 }
 
@@ -42,7 +43,7 @@ export default recompact.compose(
       document.removeEventListener('keydown', onPlayerReady)
     },
   }),
-  injectSheet(styles),
+  injectSheet(styles)
 )(({ classes, currentPlayer: { status } }) => (
   <Text className={classes.root} lead>
     {status !== 'ready' ? 'Press enter to start...' : null}

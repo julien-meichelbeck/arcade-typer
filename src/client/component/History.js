@@ -6,6 +6,7 @@ import Text from 'client/component/Text'
 import injectSheet from 'react-jss'
 import Container from 'client/component/Container'
 import Banner from 'client/component/Banner'
+import classNames from 'classnames'
 import provideObs from './History.obs'
 
 const styles = {
@@ -16,14 +17,14 @@ const styles = {
     width: '100%',
     textAlign: 'left',
   },
-  td: {
-    padding: '8px 0',
+  tr: {
+    height: 30,
   },
   th: {
     color: 'rgb(170, 111, 252)',
   },
   title: {
-    color: 'rgb(43, 255, 234)',
+    color: 'rgb(170, 111, 252)',
     fontFamily: "'Press Start 2P', cursive",
     textAlign: 'center',
     margin: '20px 0',
@@ -54,20 +55,20 @@ export default recompact.compose(
       <br />
       <table className={classes.table}>
         <thead>
-          <tr className={classes.th}>
-            <th className={classes.td}>Date</th>
-            <th className={classes.td}>Position</th>
-            <th className={classes.td}>Speed</th>
+          <tr className={classNames([classes.th, classes.tr])}>
+            <th>Date</th>
+            <th>Position</th>
+            <th>Speed</th>
           </tr>
         </thead>
         <tbody>
           {histories.map(history => (
-            <tr key={history.created_at}>
-              <td className={classes.td}>{moment(history.created_at).format('MMMM Do YYYY, h:mm')}</td>
-              <td className={classes.td}>
+            <tr key={history.created_at} className={classes.tr}>
+              <td>{moment(history.created_at).format('MMMM Do YYYY, h:mm')}</td>
+              <td>
                 {history.position} {history.position === 1 ? '🏆' : null}
               </td>
-              <td className={classes.td}>{history.speed} WPM</td>
+              <td>{history.speed} WPM</td>
             </tr>
           ))}
         </tbody>
