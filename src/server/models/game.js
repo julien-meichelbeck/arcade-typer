@@ -4,6 +4,7 @@ import { WAITING_ROOM, COUNTDOWN, NEXT_GAME_COUNTDOWN } from 'shared/statuses'
 import { sample, now } from 'shared/utils'
 import { GET_GAME_STATE } from 'shared/actions/games'
 import Text from 'server/models/Text'
+import History from 'server/models/History'
 import { startCountdown, startNextGameCountdown } from './asyncActions'
 import handleGameChange from './handleGameChange'
 
@@ -117,6 +118,9 @@ export default class Game {
   }
 
   async reset() {
+    this.state.players.filter(({ speed, progress }) => speed > 1 && progress > 2).forEach(({ id, speed, position }) => {
+      new History({ user_id: id, speed, position }).save()
+    })
     const players = this.state.players.map(player => ({
       ...player,
       speed: 0,

@@ -1,6 +1,6 @@
 import { IO_CONNECT, IO_DISCONNECT } from 'shared/config'
-import { JOIN_GAME, LEAVE_GAME, SEND_PLAYER_STATE } from 'shared/actions/games'
-import { joinGame, leaveGame, updatePlayer } from 'server/state'
+import { JOIN_GAME, LEAVE_GAME, RESET_GAME, SEND_PLAYER_STATE } from 'shared/actions/games'
+import { joinGame, leaveGame, updatePlayer, resetGame } from 'server/state'
 
 export default io => {
   io.on(IO_CONNECT, socket => {
@@ -13,6 +13,9 @@ export default io => {
           break
         case LEAVE_GAME:
           leaveGame(io, socket, payload)
+          break
+        case RESET_GAME:
+          resetGame(io, payload)
           break
         case SEND_PLAYER_STATE:
           updatePlayer(io, payload)

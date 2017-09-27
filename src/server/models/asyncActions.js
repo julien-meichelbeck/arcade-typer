@@ -1,7 +1,5 @@
 import { NEXT_GAME_COUNTDOWN } from 'shared/statuses'
 import Game from 'server/models/game'
-import History from 'server/models/History'
-import { isProd } from 'shared/utils'
 
 export const startCountdown = (gameId, io) => {
   const intervalId = setInterval(() => {
@@ -13,13 +11,7 @@ export const startCountdown = (gameId, io) => {
   }, 1000)
 }
 
-const saveHistory = ({ state: { players } }) => {
-  players.filter(({ speed, progress }) => speed > 1 && progress > 2).forEach(({ id, speed, position }) => {
-    new History({ user_id: id, speed, position }).save()
-  })
-}
-
-const NEXT_GAME_COUNTDOWN_TIME = isProd ? 30 : 3
+const NEXT_GAME_COUNTDOWN_TIME = 30
 export const startNextGameCountdown = (gameId, io) => {
   const intervalId = setInterval(() => {
     Game.find(gameId, io)
@@ -31,7 +23,6 @@ export const startNextGameCountdown = (gameId, io) => {
           game.setState({ nextGameCountdown: nextGameCountdownValue })
         } else {
           clearInterval(intervalId)
-          saveHistory(game)
           game.reset()
         }
       })

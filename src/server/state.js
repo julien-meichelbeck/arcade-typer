@@ -20,4 +20,10 @@ const updatePlayer = (io, { gameId, player }) => {
     .catch(e => console.error(e))
 }
 
-export { joinGame, leaveGame, updatePlayer }
+const resetGame = (io, { gameId }) => {
+  Game.find(gameId, io)
+    .then(game => game.reset())
+    .catch(e => console.error(e))
+}
+
+export { joinGame, leaveGame, updatePlayer, resetGame }
