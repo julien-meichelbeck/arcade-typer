@@ -22,6 +22,7 @@ export default recompact.compose(
       <thead>
         <tr>
           <th>Date</th>
+          <th>Position</th>
           <th>Speed</th>
         </tr>
       </thead>
@@ -29,6 +30,7 @@ export default recompact.compose(
         {histories.map(history => (
           <tr key={history.created_at}>
             <td style={{ width: 250 }}>{history.created_at}</td>
+            <td>{history.position}</td>
             <td>{history.speed} WPM</td>
           </tr>
         ))}

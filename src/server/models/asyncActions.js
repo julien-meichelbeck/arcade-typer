@@ -14,8 +14,8 @@ export const startCountdown = (gameId, io) => {
 }
 
 const saveHistory = ({ state: { players } }) => {
-  players.filter(({ speed, progress }) => speed > 1 && progress > 2).forEach(player => {
-    new History({ user_id: player.id, speed: player.speed }).save()
+  players.filter(({ speed, progress }) => speed > 1 && progress > 2).forEach(({ id, speed, position }) => {
+    new History({ user_id: id, speed, position }).save()
   })
 }
 
