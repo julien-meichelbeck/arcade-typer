@@ -60,7 +60,7 @@ export default ({ props$, currentAccount$ }) => {
         .withLatestFrom(words$, currentIndex$, (_interval, words, index) => {
           const durationInMinutes = (Date.now() - startTime) / 1000 / 60
           const typedCharactersCount = words.slice(0, index).reduce((acc, elem) => acc + elem.length, 0) + index
-          return Math.round(typedCharactersCount / AVERAGE_CHARS_PER_WORD / durationInMinutes * 1.2)
+          return Math.round(typedCharactersCount / AVERAGE_CHARS_PER_WORD / durationInMinutes)
         })
     })
 
