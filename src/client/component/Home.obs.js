@@ -11,8 +11,8 @@ export default ({ props$ }) => {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-        }),
-      ),
+        })
+      )
     )
     .filter(response => response.ok)
     .switchMap(response => Rx.Observable.fromPromise(response.json()))

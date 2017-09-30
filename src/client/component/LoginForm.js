@@ -9,8 +9,6 @@ import provideObs from './LoginForm.obs'
 
 export default recompact.compose(
   withRouter,
-  recompact.pluckObs(['currentAccount$']),
-  recompact.branch(({ currentAccount }) => currentAccount, () => () => <p>Connected.</p>),
   recompact.withState('username', 'onUsernameChange', ''),
   recompact.withState('password', 'onPasswordChange', ''),
   recompact.connectObs(provideObs),
@@ -21,7 +19,7 @@ export default recompact.compose(
       event.preventDefault()
       onSubmit()
     },
-  }),
+  })
 )(({ onUsernameChange, username, password, onPasswordChange, onSubmit, errorMessage }) => (
   <form onSubmit={onSubmit}>
     <FormGroup label="Username">
