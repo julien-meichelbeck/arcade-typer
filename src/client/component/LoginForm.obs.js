@@ -8,19 +8,17 @@ export default ({ props$, currentAccount$ }) => {
   const $loginTask = submit$
     .withLatestFrom(props$)
     .switchMap(([, { username, password }]) =>
-      Rx.Observable.fromPromise(
-        fetch(LOGIN_ROUTE, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, password }),
-        }),
-      ),
+      fetch(LOGIN_ROUTE, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
     )
     .filter(response => response.ok)
-    .switchMap(response => Rx.Observable.fromPromise(response.json()))
+    .switchMap(response => response.json())
     .publishReplay(1)
     .refCount()
 
@@ -31,7 +29,7 @@ export default ({ props$, currentAccount$ }) => {
 
   const errorMessage$ = $loginTask
     .filter(({ success }) => !success)
-    .map(({ message }) => (message === BAD_PASSWORD ? 'Another password is expected for this username' : message))
+    .map(({ message }) => (message === BAD_PASSWORD ? 'Wrong password.' : message))
 
   return {
     onSubmit: submit$,

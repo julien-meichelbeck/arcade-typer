@@ -11,8 +11,7 @@ const show = (req, res) => {
     .then(() => res.send(renderApp(req)))
     .catch(error => {
       console.error(error)
-      res.status(500)
-      // res.status(404).redirect(NOT_FOUND)
+      res.status(404).redirect('/')
     })
 }
 
