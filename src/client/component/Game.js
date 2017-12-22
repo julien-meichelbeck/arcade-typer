@@ -1,6 +1,6 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
-import { joinGame, leaveGame } from 'client/socketApi'
+import { joinGame, leaveGame, sendPlayerState } from 'client/socketApi'
 import { gameState$ } from 'client/socket'
 import { WAITING_ROOM, READY_CHECK } from 'shared/statuses'
 import GameText from 'client/component/GameText'
@@ -10,6 +10,13 @@ import GameLoginForm from 'client/component/GameLoginForm'
 import GameInput from 'client/component/GameInput'
 import ReadyCheck from 'client/component/ReadyCheck'
 import provideObs from './Game.obs'
+
+const onPlayerReady = ({ gameId, currentPlayer }) => e => {
+  if (e.code === 'Enter') {
+    sendPlayerState({ gameId, playerState: { status: 'ready' }, account: currentPlayer })
+    document.removeEventListener('keydown', onPlayerReady)
+  }
+}
 
 export default recompact.compose(
   recompact.setDisplayName('Game'),
@@ -41,7 +48,7 @@ export default recompact.compose(
     <GameTrack />
     {{
       [WAITING_ROOM]: <WaitingRoom />,
-      [READY_CHECK]: <ReadyCheck />,
+      [READY_CHECK]: <ReadyCheck onPlayerReady={onPlayerReady} />,
     }[gameStatus] || (
       <div>
         <GameText />

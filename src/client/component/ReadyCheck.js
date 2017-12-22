@@ -1,6 +1,5 @@
 import React from 'react'
 import recompact from 'shared/modules/recompact'
-import { sendPlayerState } from 'client/socketApi'
 import Text from 'client/component/Text'
 import injectSheet from 'react-jss'
 
@@ -12,16 +11,8 @@ const styles = {
   },
 }
 
-const onPlayerReady = ({ gameId, currentPlayer }) => e => {
-  if (e.code === 'Enter') {
-    sendPlayerState({ gameId, playerState: { status: 'ready' }, account: currentPlayer })
-    document.removeEventListener('keydown', onPlayerReady)
-  }
-}
-
 export default recompact.compose(
   recompact.pluckObs(['currentPlayer$', 'gameId$']),
-  recompact.withHandlers({ onPlayerReady }),
   recompact.withState('readyCheckListener', 'setReadyCheckListener', true),
   recompact.lifecycle({
     componentWillMount() {

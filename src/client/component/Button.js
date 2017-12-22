@@ -47,7 +47,7 @@ const styles = {
 }
 
 export default injectSheet(
-  styles,
+  styles
 )(({ children, classes, sheet, primary, dark, spaced, to, className: classNameProp, ...props }) => {
   const className = classNames(classNameProp, classes.root, {
     [classes.primary]: primary,

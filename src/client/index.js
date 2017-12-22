@@ -2,10 +2,12 @@ import 'babel-polyfill'
 import React from 'react'
 import { Switch } from 'react-router'
 import { BrowserRouter, Route } from 'react-router-dom'
-import { HOME_ROUTE, HISTORY_ROUTE, gameRoute } from 'shared/routes'
+import { HOME_ROUTE, HISTORY_ROUTE, NEW_GAME_ROUTE, SOLO_GAME_ROUTE, gameRoute } from 'shared/routes'
 import Nav from 'client/component/Nav'
 import HomePage from 'client/component/Home'
 import GamePage from 'client/component/Game'
+import SoloGame from 'client/component/SoloGame'
+import NewGame from 'client/component/NewGame'
 import HistoryPage from 'client/component/History'
 import NotFoundPage from 'client/component/not-found'
 import Container from 'client/component/Container'
@@ -23,6 +25,8 @@ const App = recompact.withObs(() => ({
       <Nav />
       <Container>
         <Switch>
+          <Route path={NEW_GAME_ROUTE} render={NewGame} />
+          <Route path={SOLO_GAME_ROUTE} render={() => <SoloGame />} />
           <Route path={gameRoute()} render={props => <GamePage gameId={props.match.params.gameId} />} />
           <Route exact path={HOME_ROUTE} render={() => <HomePage />} />
           <Route exact path={HISTORY_ROUTE} render={() => <HistoryPage />} />

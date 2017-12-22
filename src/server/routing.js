@@ -2,8 +2,19 @@ import renderApp from 'server/renderApp'
 import gamesController from 'server/controllers/gamesController'
 import sessionsController from 'server/controllers/sessionsController'
 import usersController from 'server/controllers/usersController'
-import { gameRoute, PLAY_ROUTE, userRoute, LOGIN_ROUTE, LOGOUT_ROUTE } from 'shared/routes'
+import {
+  gameRoute,
+  PLAY_ROUTE,
+  userRoute,
+  LOGIN_ROUTE,
+  LOGOUT_ROUTE,
+  NEW_GAME_ROUTE,
+  SOLO_GAME_ROUTE,
+} from 'shared/routes'
 
+const SPA = (req, res) => {
+  res.send(renderApp(req))
+}
 export default app => {
   app.get('/', gamesController.index)
 
@@ -13,6 +24,8 @@ export default app => {
 
   // Games
   app.post(PLAY_ROUTE, gamesController.create)
+  app.get(NEW_GAME_ROUTE, SPA)
+  app.get(SOLO_GAME_ROUTE, SPA)
   app.get(gameRoute(), gamesController.show)
 
   // API
@@ -24,9 +37,7 @@ export default app => {
   })
 
   // Views
-  app.get('*', (req, res) => {
-    res.send(renderApp(req))
-  })
+  app.get('*', SPA)
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
