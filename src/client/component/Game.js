@@ -6,6 +6,7 @@ import { WAITING_ROOM, READY_CHECK } from 'shared/statuses'
 import GameText from 'client/component/GameText'
 import GameTrack from 'client/component/GameTrack'
 import WaitingRoom from 'client/component/WaitingRoom'
+import GameLoginForm from 'client/component/GameLoginForm'
 import GameInput from 'client/component/GameInput'
 import ReadyCheck from 'client/component/ReadyCheck'
 import provideObs from './Game.obs'
@@ -13,6 +14,7 @@ import provideObs from './Game.obs'
 export default recompact.compose(
   recompact.setDisplayName('Game'),
   recompact.pluckObs(['currentAccount$']),
+  recompact.branch(({ currentAccount }) => !currentAccount, recompact.renderComponent(GameLoginForm)),
   recompact.lifecycle({
     componentWillMount() {
       const { gameId, currentAccount: player } = this.props
