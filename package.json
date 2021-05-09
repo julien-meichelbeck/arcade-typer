@@ -52,7 +52,7 @@
     "isomorphic-fetch": "^2.2.1",
     "jest": "^21.1.0",
     "knex": "^0.14.2",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "moment": "^2.18.1",
     "nodemon": "^1.12.1",
     "passport": "^0.4.0",
